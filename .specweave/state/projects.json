@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "projects": {
+    "shopvui": {
+      "id": "shopvui",
+      "name": "shopvui",
+      "techStack": [],
+      "keywords": [],
+      "created": "2026-03-10T13:33:29.071Z"
+    }
+  },
+  "defaultProject": "shopvui",
+  "metadata": {
+    "created": "2026-03-10T13:33:29.071Z",
+    "lastModified": "2026-03-10T13:33:29.071Z"
+  }
+}

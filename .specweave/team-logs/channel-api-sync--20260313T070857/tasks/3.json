@@ -1,0 +1,14 @@
+{
+  "id": "3",
+  "subject": "Phase 2b: frontend agent (T-019, T-020)",
+  "description": "Downstream agent: Admin Channel Settings page, Sync Logs UI. 2 tasks. Depends on Phase 1 completion.",
+  "activeForm": "Running frontend agent (Phase 2)",
+  "owner": "team-lead",
+  "status": "completed",
+  "blocks": [
+    "4"
+  ],
+  "blockedBy": [
+    "1"
+  ]
+}

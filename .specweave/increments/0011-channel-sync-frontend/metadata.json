@@ -1,0 +1,16 @@
+{
+  "increment": "0011-channel-sync-frontend",
+  "title": "Channel Sync Frontend - Admin Channel Settings UI",
+  "status": "completed",
+  "priority": "P2",
+  "type": "feature",
+  "created": "2026-03-12",
+  "parent": "0008-channel-api-sync",
+  "tasks": [
+    "T-019",
+    "T-020"
+  ],
+  "updated": "2026-03-12T15:57:39.000Z",
+  "lastActivity": "2026-03-13T00:15:00.000Z",
+  "approvedAt": "2026-03-13T00:15:00.000Z"
+}

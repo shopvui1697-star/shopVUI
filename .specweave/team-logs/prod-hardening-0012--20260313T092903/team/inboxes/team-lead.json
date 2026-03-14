@@ -1,0 +1,76 @@
+[
+  {
+    "from": "frontend-agent",
+    "text": "PLAN_READY\n\nI've reviewed the spec, plan, tasks, and existing codebase. Here's my implementation approach for T-011, T-012, T-013:\n\n## T-011: Web app error.tsx and loading.tsx (6 route segments)\n\n**Files to create** (12 total):\n- `apps/web/src/app/error.tsx` + `loading.tsx` (root)\n- `apps/web/src/app/products/error.tsx` + `loading.tsx`\n- `apps/web/src/app/products/[id]/error.tsx` + `loading.tsx`\n- `apps/web/src/app/cart/error.tsx` + `loading.tsx`\n- `apps/web/src/app/checkout/error.tsx` + `loading.tsx`\n- `apps/web/src/app/orders/error.tsx` + `loading.tsx`\n\n**Pattern**: All error.tsx use `'use client'`, receive `{ error, reset }` props, show context-specific friendly message + \"Try again\" button. Never render `error.message`.\n\n**Context-specific messages**:\n- Root: \"Something went wrong. Please try again.\"\n- Products list: \"We couldn't load products right now.\" + link to home\n- Product detail: \"We couldn't load this product.\" + link back to products\n- Cart: \"We couldn't load your cart.\"\n- Checkout: \"Something went wrong during checkout. Don't worry, your cart is still saved.\"\n- Orders: \"We couldn't load your orders.\"\n\n**Loading components**: The web app uses inline styles (no Tailwind on web app). Loading.tsx will use simple animated pulse/skeleton divs matching page layouts. Admin app uses Tailwind.\n\n## T-012: Admin app root error boundary and loading\n\n**Files to create** (2 total):\n- `apps/admin/src/app/error.tsx` — `'use client'`, retry button, Tailwind-styled\n- `apps/admin/src/app/loading.tsx` — centered spinner with Tailwind animation\n\n**Note**: Admin app uses Tailwind CSS (confirmed by `globals.css` import and className usage in layout.tsx). Web app uses inline styles.\n\n## T-013: Open Graph metadata\n\n**File modifications** (2 total):\n1. `apps/web/src/app/layout.tsx` — Expand `metadata` export to include `openGraph: { title, description, type: 'website', images }` and `metadataBase`\n2. `apps/web/src/app/products/[id]/page.tsx` — Add `generateMetadata` async function that calls `getProduct(id)` and returns product-specific OG tags (title, description, images). Fallback to defaults if product not found.\n\n**Data fetching note**: The existing `getProduct` function from `../../lib/api` is already used in the page component. Next.js deduplicates fetch calls, so `generateMetadata` can safely call `getProduct` again.\n\nReady for approval to proceed.",
+    "summary": "PLAN_READY: Frontend tasks T-011, T-012, T-013",
+    "timestamp": "2026-03-13T00:43:17.049Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "frontend-agent",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"frontend-agent\",\"timestamp\":\"2026-03-13T00:43:20.782Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-13T00:43:20.782Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "backend-agent",
+    "text": "PLAN_READY\n\nI've read the spec, plan, tasks, and explored the existing codebase. Here's my implementation approach for T-001 through T-010:\n\n## Codebase State\n- `main.ts`: Currently registers CORS, global prefix, Swagger only\n- `app.module.ts`: Pure module imports, no middleware config\n- `tsconfig`: `emitDecoratorMetadata: true` already enabled\n- All 9 DTOs are plain TypeScript interfaces\n- Health controller returns simple `{ status: 'ok' }`\n- Prisma schema has 2 existing indexes on Order (channel, externalOrderId+channel)\n- Tests use vitest with `globals: true`, existing pattern: direct instantiation or `vi.mock('@shopvui/db')`\n\n## Implementation Order (following tasks.md)\n\n### T-001: HttpExceptionFilter\n- Create `apps/api/src/common/filters/http-exception.filter.ts`\n- `@Catch()` decorator, branch on `instanceof HttpException`\n- Standardized shape: `{ statusCode, message, error, timestamp, path }`\n- Register in main.ts via `app.useGlobalFilters()`\n- Test: `apps/api/src/common/filters/__tests__/http-exception.filter.spec.ts`\n\n### T-002: Verify no stack trace leaks\n- Additional test cases in the same spec file\n- Verify response body keys are exactly the whitelisted set\n- Test with Prisma-style errors, generic errors\n\n### T-003: Process-level handlers\n- Add `unhandledRejection` and `uncaughtException` handlers in main.ts\n- Use NestJS Logger, not console.log\n- Test: `apps/api/src/__tests__/process-handlers.spec.ts`\n\n### T-004: Install class-validator/class-transformer + ValidationPipe\n- `pnpm --filter @shopvui/api add class-validator class-transformer`\n- Register `ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true })` in main.ts\n\n### T-005: Convert 9 DTO files\n- Convert all interfaces to classes with appropriate decorators per plan.md D5\n- Files: create-reseller.dto, admin-order-filters.dto, admin-product.dto, admin-coupon.dto, admin-reseller.dto, admin-customer.dto, admin-analytics.dto, price-tier.dto, coupon.dto\n- Test: DTO validation unit tests using `validate(plainToInstance(...))`\n\n### T-006: Helmet\n- `pnpm --filter @shopvui/api add helmet`\n- `app.use(helmet({ contentSecurityPolicy: process.env.NODE_ENV === 'production' }))` as first middleware in main.ts\n- Test: verify security headers in response\n\n### T-007: @nestjs/throttler\n- `pnpm --filter @shopvui/api add @nestjs/throttler`\n- `ThrottlerModule.forRoot()` in app.module.ts with env-configurable ttl/limit\n- `APP_GUARD` provider for ThrottlerGuard\n- `@Throttle()` on auth controller, `@SkipThrottle()` on health controller\n- AppModule needs `NestModule` implementation for middleware\n\n### T-008: RequestLoggerMiddleware\n- Create `apps/api/src/common/middleware/request-logger.middleware.ts`\n- NestMiddleware class using NestJS Logger\n- Register via `AppModule.configure()` with `consumer.apply().forRoutes('*')`\n- Exclude /api/health from logging\n- Test: mock req/res/next, verify log output\n\n### T-009: Health endpoint enhancement\n- Add `prisma.$queryRaw` with 2s timeout via `Promise.race`\n- Return `{ status: 'ok', database: 'connected' }` or throw `ServiceUnavailableException`\n- Add `@SkipThrottle()` decorator\n- Test: mock prisma, test connected/disconnected/timeout scenarios\n\n### T-010: Prisma indexes\n- Add indexes to Order, Commission, CouponUsage, OrderItem, Product models per plan.md D6\n- Run `prisma validate` (skip `migrate dev` since no DB available in this context)\n\n## Notes\n- All new files get corresponding `__tests__/` spec files following existing convention\n- Using NestJS Logger throughout (no console.log)\n- Backward-compatible: interface->class change is transparent to consumers",
+    "summary": "PLAN_READY: Backend implementation approach for T-001 to T-010",
+    "timestamp": "2026-03-13T00:43:22.965Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "backend-agent",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"backend-agent\",\"timestamp\":\"2026-03-13T00:43:25.631Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-13T00:43:25.631Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "frontend-agent",
+    "text": "COMPLETION: All 3 frontend tasks (T-011, T-012, T-013) are implemented.\n\n## T-011: Web app error.tsx and loading.tsx (12 files created)\n- `apps/web/src/app/error.tsx` + `loading.tsx` (root)\n- `apps/web/src/app/products/error.tsx` + `loading.tsx`\n- `apps/web/src/app/products/[id]/error.tsx` + `loading.tsx`\n- `apps/web/src/app/cart/error.tsx` + `loading.tsx`\n- `apps/web/src/app/checkout/error.tsx` + `loading.tsx`\n- `apps/web/src/app/orders/error.tsx` + `loading.tsx`\n\nAll error.tsx files: `'use client'` directive, `{ error, reset }` props, context-specific friendly messages, retry button, never render `error.message`. Loading files: pulse-animated skeletons matching each page layout.\n\n## T-012: Admin app error boundary and loading (2 files created)\n- `apps/admin/src/app/error.tsx` — Tailwind-styled with retry button\n- `apps/admin/src/app/loading.tsx` — centered spinner with Tailwind animate-spin\n\n## T-013: Open Graph metadata (2 files modified)\n- `apps/web/src/app/layout.tsx` — Added `Metadata` type, `openGraph` with title, description, type: 'website', images\n- `apps/web/src/app/products/[id]/page.tsx` — Added `generateMetadata()` async function that fetches product and returns dynamic OG tags (title, description, images). Falls back to \"Product not found - ShopVUI\" for missing products.\n\n## Verification\n- `npx tsc --noEmit` passes cleanly for both web and admin apps (zero errors from my code)\n- Build warnings are pre-existing `@typescript-eslint/no-explicit-any` in files I didn't touch\n\n## Spec/Tasks updated\n- tasks.md: T-011, T-012, T-013 marked `[x] completed`\n- spec.md: AC-US6-01, AC-US6-02, AC-US6-03, AC-US6-04 marked `[x]`",
+    "summary": "COMPLETION: All 3 frontend tasks done",
+    "timestamp": "2026-03-13T00:46:38.617Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "frontend-agent",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"frontend-agent\",\"timestamp\":\"2026-03-13T00:46:45.803Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-13T00:46:45.803Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "frontend-agent",
+    "text": "{\"type\":\"shutdown_approved\",\"requestId\":\"shutdown-1773362907637@frontend-agent\",\"from\":\"frontend-agent\",\"timestamp\":\"2026-03-13T00:48:30.791Z\",\"paneId\":\"in-process\",\"backendType\":\"in-process\"}",
+    "timestamp": "2026-03-13T00:48:30.791Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "backend-agent",
+    "text": "COMPLETION: All 10 tasks (T-001 through T-010) for increment 0012-production-hardening are implemented and tested.\n\n**Test results**: 25 test files passed, 152 tests passing (0 failures).\n\nNote: I fixed the pre-existing `app.e2e.spec.ts` test which broke because the health endpoint now checks DB connectivity (returns `{ status: 'ok', database: 'connected' }` instead of `{ status: 'ok' }`). Added a `@shopvui/db` mock to that E2E test.\n\nThe 2 integration test files (`aov-by-channel.integration.spec.ts`, `reseller-performance.integration.spec.ts`) were already failing before my changes — they require a live DATABASE_URL which isn't available in the test environment. These are not related to my work.\n\n**Summary of all changes**:\n\n| Task | Description | Key Files |\n|------|-------------|-----------|\n| T-001 | HttpExceptionFilter | `common/filters/http-exception.filter.ts` + tests |\n| T-002 | Sanitize internal errors | Covered by T-001 filter (non-HttpException branch) |\n| T-003 | Global ValidationPipe | `main.ts` (whitelist, transform, forbidNonWhitelisted) |\n| T-004 | Process-level handlers | `main.ts` + `__tests__/process-handlers.spec.ts` |\n| T-005 | DTO validation classes | 9 DTO files converted with class-validator decorators + tests |\n| T-006 | Helmet security headers | `main.ts` + `security-headers.spec.ts` |\n| T-007 | Rate limiting (ThrottlerModule) | `app.module.ts`, `auth.controller.ts`, `health.controller.ts` |\n| T-008 | Request logger middleware | `common/middleware/request-logger.middleware.ts` + tests |\n| T-009 | Health check with DB probe | `health/health.controller.ts` + tests |\n| T-010 | Database performance indexes | `schema.prisma` (validated with prisma validate) |\n\nAll ACs for US-001 through US-005 marked complete in spec.md and tasks.md.",
+    "summary": "All 10 tasks complete, 152 tests passing",
+    "timestamp": "2026-03-13T02:02:39.286Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "backend-agent",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"backend-agent\",\"timestamp\":\"2026-03-13T02:02:42.112Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-13T02:02:42.112Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "backend-agent",
+    "text": "{\"type\":\"shutdown_approved\",\"requestId\":\"shutdown-1773367369513@backend-agent\",\"from\":\"backend-agent\",\"timestamp\":\"2026-03-13T02:02:52.537Z\",\"paneId\":\"in-process\",\"backendType\":\"in-process\"}",
+    "timestamp": "2026-03-13T02:02:52.537Z",
+    "color": "blue",
+    "read": true
+  }
+]

@@ -1,0 +1,18 @@
+[isClaudeCliAvailable] Running fresh detection (no cache)...
+[isClaudeCliAvailable] Claude CLI available: version=2.1.72 (Claude Code), path=/Users/honda/.local/bin/claude, method=binary
+[executeClaudeCli] Using direct binary: /Users/honda/.local/bin/claude
+Extracted result from JSON wrapper, duration_ms: 9653
+Increment recommendation: none (confidence: 0.95, mandatory: false)
+{
+  "detected": false,
+  "plugins": [],
+  "confidence": 0.95,
+  "reasoning": "Status notification of completed background task, no implementation work requested",
+  "latencyMs": 11427.371959,
+  "increment": {
+    "action": "none",
+    "confidence": 0.95,
+    "mandatory": false,
+    "reasoning": "Informational notification only, no new work requested"
+  }
+}

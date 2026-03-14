@@ -1,0 +1,345 @@
+{
+  "version": 1,
+  "updatedAt": "2026-03-14T03:20:03Z",
+  "increments": {
+    "0001-project-setup": {
+      "status": "active",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 15,
+        "completed": 15
+      },
+      "acs": {
+        "total": 26,
+        "completed": 26
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-10T20:28:04Z",
+      "userStories": []
+    },
+    "0002-google-oauth": {
+      "status": "active",
+      "type": "feature",
+      "priority": "P1",
+      "title": "Google OAuth2 Authentication",
+      "project": "shopvui",
+      "tasks": {
+        "total": 6,
+        "completed": 6
+      },
+      "acs": {
+        "total": 0,
+        "completed": 0
+      },
+      "createdAt": "2026-03-10T00:00:00.000Z",
+      "lastActivity": "2026-03-10T21:29:31Z",
+      "userStories": []
+    },
+    "0003-product-catalog": {
+      "status": "completed",
+      "type": "feature",
+      "priority": "P1",
+      "title": "Product Catalog (Read-Only)",
+      "project": "",
+      "tasks": {
+        "total": 8,
+        "completed": 8
+      },
+      "acs": {
+        "total": 19,
+        "completed": 19
+      },
+      "createdAt": "2026-03-10T00:00:00.000Z",
+      "lastActivity": "2026-03-11T20:49:35Z",
+      "userStories": []
+    },
+    "0004-ecommerce-flow": {
+      "status": "active",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 44,
+        "completed": 44
+      },
+      "acs": {
+        "total": 33,
+        "completed": 33
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-11T21:49:02Z",
+      "userStories": []
+    },
+    "0005-reseller-system": {
+      "status": "active",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 20,
+        "completed": 20
+      },
+      "acs": {
+        "total": 36,
+        "completed": 36
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-11T22:42:55Z",
+      "userStories": []
+    },
+    "0006-admin-dashboard": {
+      "status": "completed",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 23,
+        "completed": 23
+      },
+      "acs": {
+        "total": 40,
+        "completed": 40
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-12T08:01:18Z",
+      "userStories": []
+    },
+    "0007-feature-enhancements": {
+      "status": "completed",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 20,
+        "completed": 20
+      },
+      "acs": {
+        "total": 29,
+        "completed": 29
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-12T21:09:07Z",
+      "userStories": []
+    },
+    "0008-channel-api-sync": {
+      "status": "active",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 22,
+        "completed": 22
+      },
+      "acs": {
+        "total": 44,
+        "completed": 44
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-12T23:59:42Z",
+      "userStories": []
+    },
+    "0009-channel-sync-core": {
+      "status": "ready_for_review",
+      "type": "feature",
+      "priority": "P1",
+      "title": "Channel Sync Core - Backend Services (T-001 to T-011)",
+      "project": "",
+      "tasks": {
+        "total": 11,
+        "completed": 11
+      },
+      "acs": {
+        "total": 0,
+        "completed": 0
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-12T22:51:34Z",
+      "userStories": []
+    },
+    "0010-channel-sync-tiktok": {
+      "status": "ready_for_review",
+      "type": "feature",
+      "priority": "P1",
+      "title": "Channel Sync - TikTok Backend",
+      "project": "",
+      "tasks": {
+        "total": 9,
+        "completed": 9
+      },
+      "acs": {
+        "total": 0,
+        "completed": 0
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-12T22:58:33Z",
+      "userStories": []
+    },
+    "0011-channel-sync-frontend": {
+      "status": "ready_for_review",
+      "type": "feature",
+      "priority": "P2",
+      "title": "Channel Sync Frontend - Admin Channel Settings UI",
+      "project": "",
+      "tasks": {
+        "total": 2,
+        "completed": 2
+      },
+      "acs": {
+        "total": 7,
+        "completed": 7
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-12T22:57:39Z",
+      "userStories": []
+    },
+    "0012-production-hardening": {
+      "status": "completed",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 13,
+        "completed": 13
+      },
+      "acs": {
+        "total": 21,
+        "completed": 21
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-13T09:28:25Z",
+      "userStories": []
+    },
+    "0013-deploy-guide": {
+      "status": "ready_for_review",
+      "type": "feature",
+      "priority": "P2",
+      "title": "DEPLOY Guide Documentation",
+      "project": "",
+      "tasks": {
+        "total": 6,
+        "completed": 6
+      },
+      "acs": {
+        "total": 15,
+        "completed": 15
+      },
+      "createdAt": "2026-03-14T00:00:00.000Z",
+      "lastActivity": "2026-03-14T10:19:39Z",
+      "userStories": []
+    }
+  },
+  "summary": {
+    "total": 13,
+    "active": 5,
+    "paused": 0,
+    "backlog": 0,
+    "planning": 0,
+    "ready_for_review": 4,
+    "completed": 4,
+    "abandoned": 0,
+    "archived": 0,
+    "byType": {
+      "feature": 13,
+      "hotfix": 0,
+      "bug": 0,
+      "refactor": 0,
+      "experiment": 0,
+      "change-request": 0
+    },
+    "byPriority": {
+      "P0": 0,
+      "P1": 11,
+      "P2": 2,
+      "P3": 0
+    },
+    "in-progress": 0
+  },
+  "jobs": {
+    "running": [],
+    "paused": [],
+    "failed": [],
+    "completedCount": 0
+  },
+  "costs": {
+    "totalTokens": 0,
+    "totalCost": 0,
+    "totalSavings": 0,
+    "byIncrement": {}
+  },
+  "mtimes": {
+    "0001-project-setup": {
+      "metadata": 1773149284,
+      "tasks": 1773150305,
+      "spec": 1773150314
+    },
+    "0002-google-oauth": {
+      "metadata": 1773152971,
+      "tasks": 1773152588,
+      "spec": 1773152045
+    },
+    "0003-product-catalog": {
+      "metadata": 1773236975,
+      "tasks": 1773236871,
+      "spec": 1773236981
+    },
+    "0004-ecommerce-flow": {
+      "metadata": 1773240542,
+      "tasks": 1773240512,
+      "spec": 1773239452
+    },
+    "0005-reseller-system": {
+      "metadata": 1773243775,
+      "tasks": 1773243728,
+      "spec": 1773243764
+    },
+    "0006-admin-dashboard": {
+      "metadata": 1773277278,
+      "tasks": 1773319394,
+      "spec": 1773277278
+    },
+    "0007-feature-enhancements": {
+      "metadata": 1773324547,
+      "tasks": 1773324615,
+      "spec": 1773324547
+    },
+    "0008-channel-api-sync": {
+      "metadata": 1773334782,
+      "tasks": 1773331189,
+      "spec": 1773331207
+    },
+    "0009-channel-sync-core": {
+      "metadata": 1773330694,
+      "tasks": 1773330705,
+      "spec": 1773329128
+    },
+    "0010-channel-sync-tiktok": {
+      "metadata": 1773331113,
+      "tasks": 1773331113,
+      "spec": 1773330830
+    },
+    "0011-channel-sync-frontend": {
+      "metadata": 1773331059,
+      "tasks": 1773331058,
+      "spec": 1773360485
+    },
+    "0012-production-hardening": {
+      "metadata": 1773368905,
+      "tasks": 1773368919,
+      "spec": 1773368905
+    },
+    "0013-deploy-guide": {
+      "metadata": 1773458379,
+      "tasks": 1773458391,
+      "spec": 1773458403
+    }
+  }
+}

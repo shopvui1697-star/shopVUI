@@ -1,0 +1,412 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  RESELLER
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  googleId     String?       @unique @map("google_id")
+  passwordHash String?       @map("password_hash")
+  role         UserRole      @default(CUSTOMER)
+  avatar       String?
+  cart         Cart?
+  orders       Order[]
+  addresses    Address[]
+  couponUsages CouponUsage[]
+  reseller     Reseller?
+  wishlists    Wishlist[]
+  channelConnections ChannelConnection[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  description String?
+  parentId  String?    @map("parent_id")
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryTree")
+  products  Product[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("categories")
+}
+
+model Product {
+  id             String         @id @default(cuid())
+  name           String
+  slug           String         @unique
+  description    String
+  price          Int
+  compareAtPrice Int?           @map("compare_at_price")
+  sku            String         @unique
+  stockQuantity  Int            @default(0) @map("stock_quantity")
+  categoryId     String         @map("category_id")
+  category       Category       @relation(fields: [categoryId], references: [id])
+  images         ProductImage[]
+  priceTiers     PriceTier[]
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  wishlists      Wishlist[]
+  isActive       Boolean        @default(true) @map("is_active")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([categoryId, isActive])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  url       String
+  alt       String?
+  sortOrder Int     @default(0) @map("sort_order")
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("product_images")
+}
+
+// --- E-Commerce Models (Increment 0004) ---
+
+model PriceTier {
+  id        String   @id @default(cuid())
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  minQty    Int      @map("min_qty")
+  maxQty    Int?     @map("max_qty")
+  price     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([productId, minQty])
+  @@map("price_tiers")
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique @map("user_id")
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String  @map("cart_id")
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED
+  FREE_SHIPPING
+  BUY_X_GET_Y
+}
+
+model Coupon {
+  id                 String        @id @default(cuid())
+  code               String        @unique
+  type               CouponType
+  value              Int?
+  maxDiscount        Int?          @map("max_discount")
+  minPurchase        Int?          @map("min_purchase")
+  usageLimit         Int?          @map("usage_limit")
+  perUserLimit       Int?          @map("per_user_limit")
+  validFrom          DateTime?     @map("valid_from")
+  validUntil         DateTime?     @map("valid_until")
+  applicableCategory String?       @map("applicable_category")
+  buyQty             Int?          @map("buy_qty")
+  getQty             Int?          @map("get_qty")
+  isActive           Boolean       @default(true) @map("is_active")
+  isResellerCoupon   Boolean       @default(false) @map("is_reseller_coupon")
+  resellerId         String?       @map("reseller_id")
+  reseller           Reseller?     @relation(fields: [resellerId], references: [id])
+  commissionType     String?       @map("commission_type")
+  commissionValue    Int?          @map("commission_value")
+  commissionBase     String?       @map("commission_base")
+  maturityDays       Int           @default(30) @map("maturity_days")
+  usages             CouponUsage[]
+  createdAt          DateTime      @default(now()) @map("created_at")
+  updatedAt          DateTime      @updatedAt @map("updated_at")
+
+  @@map("coupons")
+}
+
+model CouponUsage {
+  id       String   @id @default(cuid())
+  couponId String   @map("coupon_id")
+  coupon   Coupon   @relation(fields: [couponId], references: [id])
+  userId   String   @map("user_id")
+  user     User     @relation(fields: [userId], references: [id])
+  orderId  String?  @map("order_id")
+  usedAt   DateTime @default(now()) @map("used_at")
+
+  @@index([couponId])
+  @@index([userId])
+  @@map("coupon_usages")
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName  String   @map("full_name")
+  phone     String
+  street    String
+  ward      String
+  district  String
+  province  String
+  isDefault Boolean  @default(false) @map("is_default")
+  orders    Order[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("addresses")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPING
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentMethod {
+  VNPAY
+  MOMO
+  BANK_TRANSFER
+  COD
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
+model Order {
+  id              String               @id @default(cuid())
+  orderNumber     String               @unique @map("order_number")
+  userId          String?              @map("user_id")
+  user            User?                @relation(fields: [userId], references: [id])
+  addressId       String?              @map("address_id")
+  address         Address?             @relation(fields: [addressId], references: [id])
+  externalOrderId String?              @map("external_order_id")
+  customerName    String?              @map("customer_name")
+  customerPhone   String?              @map("customer_phone")
+  customerEmail   String?              @map("customer_email")
+  status          OrderStatus          @default(PENDING)
+  paymentMethod   PaymentMethod        @map("payment_method")
+  paymentStatus   PaymentStatus        @default(UNPAID) @map("payment_status")
+  subtotal        Int
+  discountAmount  Int                  @default(0) @map("discount_amount")
+  shippingFee     Int                  @default(0) @map("shipping_fee")
+  total           Int
+  couponId        String?              @map("coupon_id")
+  couponCode      String?              @map("coupon_code")
+  channel         String               @default("website")
+  paymentRef      String?              @map("payment_ref")
+  resellerId      String?              @map("reseller_id")
+  reseller        Reseller?            @relation(fields: [resellerId], references: [id])
+  items           OrderItem[]
+  statusHistory   OrderStatusHistory[]
+  commissions     Commission[]
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+
+  @@index([channel])
+  @@index([externalOrderId, channel])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@index([resellerId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String  @map("order_id")
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Int     @map("unit_price")
+  subtotal  Int
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String      @map("order_id")
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@map("order_status_history")
+}
+
+// --- Reseller System (Increment 0005) ---
+
+enum ResellerStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  REJECTED
+}
+
+enum CommissionStatus {
+  PENDING
+  MATURING
+  APPROVED
+  PAID
+  VOIDED
+}
+
+model Reseller {
+  id                     String         @id @default(cuid())
+  userId                 String         @unique @map("user_id")
+  user                   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name                   String
+  email                  String         @unique
+  phone                  String?
+  socialProfiles         Json?          @map("social_profiles")
+  reason                 String?
+  status                 ResellerStatus @default(PENDING)
+  bankInfo               Json?          @map("bank_info")
+  defaultCommissionType  String?        @map("default_commission_type")
+  defaultCommissionValue Int?           @map("default_commission_value")
+  coupons                Coupon[]
+  orders                 Order[]
+  commissions            Commission[]
+  createdAt              DateTime       @default(now()) @map("created_at")
+  updatedAt              DateTime       @updatedAt @map("updated_at")
+
+  @@map("resellers")
+}
+
+model Commission {
+  id               String           @id @default(cuid())
+  orderId          String           @map("order_id")
+  order            Order            @relation(fields: [orderId], references: [id])
+  resellerId       String           @map("reseller_id")
+  reseller         Reseller         @relation(fields: [resellerId], references: [id])
+  couponCode       String           @map("coupon_code")
+  orderTotal       Int              @map("order_total")
+  commissionAmount Int              @map("commission_amount")
+  status           CommissionStatus @default(PENDING)
+  orderDeliveredAt DateTime?        @map("order_delivered_at")
+  maturityDate     DateTime?        @map("maturity_date")
+  approvedAt       DateTime?        @map("approved_at")
+  paidAt           DateTime?        @map("paid_at")
+  voidedAt         DateTime?        @map("voided_at")
+  voidReason       String?          @map("void_reason")
+  createdAt        DateTime         @default(now()) @map("created_at")
+
+  @@index([resellerId])
+  @@index([status])
+  @@map("commissions")
+}
+
+// --- Channel Sync (Increment 0008) ---
+
+enum ChannelType {
+  SHOPEE
+  TIKTOK
+}
+
+enum SyncStatus {
+  IDLE
+  RUNNING
+  SUCCESS
+  FAILED
+}
+
+model ChannelConnection {
+  id                    String      @id @default(cuid())
+  channel               ChannelType
+  shopId                String      @map("shop_id")
+  shopName              String      @map("shop_name")
+  encryptedAccessToken  String      @map("encrypted_access_token")
+  encryptedRefreshToken String      @map("encrypted_refresh_token")
+  tokenExpiresAt        DateTime    @map("token_expires_at")
+  syncEnabled           Boolean     @default(true) @map("sync_enabled")
+  syncIntervalMinutes   Int         @default(10) @map("sync_interval_minutes")
+  lastSyncAt            DateTime?   @map("last_sync_at")
+  lastSyncStatus        SyncStatus  @default(IDLE) @map("last_sync_status")
+  createdById           String      @map("created_by_id")
+  createdBy             User        @relation(fields: [createdById], references: [id])
+  syncLogs              SyncLog[]
+  createdAt             DateTime    @default(now()) @map("created_at")
+  updatedAt             DateTime    @updatedAt @map("updated_at")
+
+  @@unique([channel, shopId])
+  @@map("channel_connections")
+}
+
+model SyncLog {
+  id                  String            @id @default(cuid())
+  channelConnectionId String            @map("channel_connection_id")
+  channelConnection   ChannelConnection @relation(fields: [channelConnectionId], references: [id], onDelete: Cascade)
+  status              SyncStatus
+  ordersFetched       Int               @default(0) @map("orders_fetched")
+  ordersCreated       Int               @default(0) @map("orders_created")
+  ordersUpdated       Int               @default(0) @map("orders_updated")
+  errorType           String?           @map("error_type")
+  errorMessage        String?           @map("error_message")
+  durationMs          Int?              @map("duration_ms")
+  startedAt           DateTime          @default(now()) @map("started_at")
+  completedAt         DateTime?         @map("completed_at")
+
+  @@index([channelConnectionId])
+  @@index([startedAt])
+  @@map("sync_logs")
+}
+
+// --- Wishlist (Increment 0007) ---
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, productId])
+  @@map("wishlists")
+}

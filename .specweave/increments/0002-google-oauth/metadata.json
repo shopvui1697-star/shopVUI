@@ -1,0 +1,16 @@
+{
+  "id": "0002-google-oauth",
+  "title": "Google OAuth2 Authentication",
+  "description": "Google OAuth2 login with JWT tokens, Prisma/PostgreSQL, auth guards",
+  "type": "feature",
+  "status": "completed",
+  "project": "shopvui",
+  "created": "2026-03-10T00:00:00.000Z",
+  "externalLinks": {},
+  "priority": "medium",
+  "lastActivity": "2026-03-10T14:44:58.013Z",
+  "testMode": "test-after",
+  "coverageTarget": 80,
+  "readyForReviewAt": "2026-03-10T14:44:57.877Z",
+  "approvedAt": "2026-03-10T14:44:58.013Z"
+}

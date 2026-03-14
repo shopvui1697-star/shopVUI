@@ -1,0 +1,12 @@
+[isClaudeCliAvailable] Running fresh detection (no cache)...
+[isClaudeCliAvailable] Claude CLI available: version=2.1.72 (Claude Code), path=/Users/honda/.local/bin/claude, method=binary
+[executeClaudeCli] Using direct binary: /Users/honda/.local/bin/claude
+Extracted result from JSON wrapper, duration_ms: 7595
+Invalid LLM response format: I need your permission to read the output file. Would you like me to proceed with reading `/private/tmp/claude-501/-Users-honda-shopvui/tasks/bfakv6cbn.output`?
+{
+  "detected": false,
+  "plugins": [],
+  "confidence": 0,
+  "latencyMs": 9630.32425,
+  "installMessage": "Invalid response format (no JSON found)"
+}

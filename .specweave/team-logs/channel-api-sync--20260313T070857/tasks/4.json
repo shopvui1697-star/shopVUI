@@ -1,0 +1,14 @@
+{
+  "id": "4",
+  "subject": "Centralized closure: grill + done for all increments",
+  "description": "After all agents complete, run /sw:grill and /sw:done for each increment sequentially. Then /sw:team-merge.",
+  "activeForm": "Running centralized closure",
+  "owner": "team-lead",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": [
+    "1",
+    "2",
+    "3"
+  ]
+}

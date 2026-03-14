@@ -1,0 +1,15 @@
+[
+  {
+    "from": "team-lead",
+    "text": "PLAN_APPROVED: Go ahead with implementation. Plan looks correct — phasing, file structure, module wiring, and testing approach all align with the master spec and existing codebase patterns. Proceed with Phase A (T-001, T-002) first.",
+    "summary": "Plan approved, proceed with implementation",
+    "timestamp": "2026-03-12T15:26:20.653Z",
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"shutdown_request\",\"requestId\":\"shutdown-1773331147986@backend-core\",\"from\":\"team-lead\",\"reason\":\"All work complete. Shutting down team. Thank you.\",\"timestamp\":\"2026-03-12T15:59:07.986Z\"}",
+    "timestamp": "2026-03-12T15:59:07.986Z",
+    "read": true
+  }
+]

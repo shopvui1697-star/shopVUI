@@ -1,0 +1,15 @@
+{
+  "id": "0005-reseller-system",
+  "status": "completed",
+  "type": "feature",
+  "priority": "P1",
+  "created": "2026-03-11T15:04:26.692Z",
+  "lastActivity": "2026-03-11T16:13:17.709Z",
+  "testMode": "TDD",
+  "coverageTarget": 80,
+  "feature_id": null,
+  "epic_id": null,
+  "externalLinks": {},
+  "readyForReviewAt": "2026-03-11T16:13:17.593Z",
+  "approvedAt": "2026-03-11T16:13:17.709Z"
+}

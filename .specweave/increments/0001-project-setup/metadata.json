@@ -1,0 +1,15 @@
+{
+  "id": "0001-project-setup",
+  "status": "completed",
+  "type": "feature",
+  "priority": "P1",
+  "created": "2026-03-10T13:26:08.643Z",
+  "lastActivity": "2026-03-10T13:52:12.231Z",
+  "testMode": "TDD",
+  "coverageTarget": 80,
+  "feature_id": null,
+  "epic_id": null,
+  "externalLinks": {},
+  "readyForReviewAt": "2026-03-10T13:52:12.113Z",
+  "approvedAt": "2026-03-10T13:52:12.231Z"
+}

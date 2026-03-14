@@ -1,0 +1,21 @@
+{
+  "extends": "@shopvui/tsconfig/tsconfig.nextjs.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "ES2022", "webworker"],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "allowJs": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

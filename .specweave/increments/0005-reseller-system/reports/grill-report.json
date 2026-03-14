@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "incrementId": "0005-reseller-system",
+  "timestamp": "2026-03-11T16:45:00.000Z",
+  "verdict": "PASS",
+  "shipReadiness": "READY",
+  "summary": {
+    "totalFindings": 3,
+    "critical": 0,
+    "high": 0,
+    "medium": 3,
+    "suppressed": 2
+  },
+  "findings": [
+    {
+      "title": "Commission lifecycle hooks run outside transaction",
+      "severity": "medium",
+      "confidence": 75,
+      "category": "correctness",
+      "file": "apps/api/src/orders/orders.service.ts:191",
+      "issue": "Commission state transitions run after the order status transaction commits. If commission update fails, order/commission status become inconsistent.",
+      "suggestion": "Move commission operations inside the transaction or add a retry queue.",
+      "impact": "Silent inconsistency between order and commission states in rare failure cases."
+    },
+    {
+      "title": "No input validation on coupon code proposal",
+      "severity": "medium",
+      "confidence": 78,
+      "category": "security",
+      "file": "apps/api/src/resellers/resellers.service.ts:94",
+      "issue": "No length, format, or character validation on proposed coupon codes.",
+      "suggestion": "Add regex validation: /^[A-Z0-9]{3,20}$/",
+      "impact": "Special characters could leak into URLs or email templates."
+    },
+    {
+      "title": "Admin coupon approval has no value bounds check",
+      "severity": "medium",
+      "confidence": 72,
+      "category": "correctness",
+      "file": "apps/api/src/resellers/resellers.service.ts:118",
+      "issue": "No validation that percentage <= 100 or values are positive.",
+      "impact": "Invalid discount values could cause negative order totals."
+    }
+  ],
+  "fixesApplied": [
+    {
+      "original": "Email notifications are defined but never wired (HIGH, confidence 95)",
+      "fix": "Injected EmailService into CheckoutService, OrdersService, and CommissionsService. All 5 email events now fire at the correct lifecycle points."
+    },
+    {
+      "original": "No backend validation on registration password length (HIGH, confidence 90)",
+      "fix": "Added password length check (min 8 chars) in ResellerAuthService.register() with BadRequestException."
+    }
+  ]
+}

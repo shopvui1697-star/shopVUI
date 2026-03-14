@@ -1,0 +1,144 @@
+[
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"task_assignment\",\"taskId\":\"1\",\"subject\":\"Phase 1: backend-core agent (T-001 to T-011)\",\"description\":\"Upstream agent: DB schema, encryption, core services, Shopee adapter, OAuth controller, admin channels controller. 11 tasks. Must complete before Phase 2.\",\"assignedBy\":\"team-lead\",\"timestamp\":\"2026-03-12T15:23:55.597Z\"}",
+    "timestamp": "2026-03-12T15:23:55.597Z",
+    "read": true
+  },
+  {
+    "from": "backend-core",
+    "text": "PLAN_READY\n\nIncrement 0009-channel-sync-core created with spec.md, plan.md, and tasks.md covering T-001 to T-011.\n\n**Execution order**:\n- Phase A: Prisma schema + CredentialEncryptionService (T-001, T-002)\n- Phase B: ChannelConnectionService CRUD, SyncDispatcher, SyncExecutor (T-003, T-004, T-005)\n- Phase C: ShopeeAdapter OAuth + fetchOrders (T-006, T-007)\n- Phase D: OAuthController, OrderMapper, Order Upsert, AdminChannelsController (T-008-T-011)\n\n**Key findings from codebase exploration**:\n- `@nestjs/schedule` already in package.json deps\n- Uses `prisma` singleton from `@shopvui/db` (not PrismaService injection)\n- Tests use vitest with `vi.mock('@shopvui/db')` and manual service construction (no NestJS DI in tests)\n- AdminGuard pattern: `@UseGuards(AdminGuard)` on controller class\n- Order model already has `channel` field (String) + `externalOrderId` with `@@index([externalOrderId, channel])`\n- Module wiring: ChannelsModule → AppModule, AdminChannelsModule → AdminModule\n\nAwaiting PLAN_APPROVED to begin implementation.",
+    "summary": "PLAN_READY for 0009-channel-sync-core T-001 to T-011",
+    "timestamp": "2026-03-12T15:26:04.948Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "backend-core",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"backend-core\",\"timestamp\":\"2026-03-12T15:26:07.861Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-12T15:26:07.861Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "backend-core",
+    "text": "CONTRACT_READY + COMPLETION\n\nAll 11 tasks (T-001 to T-011) are implemented and tested. **64 tests pass across 8 test files**, no regressions in existing tests.\n\n## What was built\n\n### Schema (T-001)\n- `ChannelType` enum (SHOPEE, TIKTOK), `SyncStatus` enum (IDLE, RUNNING, SUCCESS, FAILED)\n- `ChannelConnection` model with `@@unique([channel, shopId])`, encrypted token fields\n- `SyncLog` model with cascade delete on connection, indexed by connectionId and startedAt\n- `channelConnections` relation added to User model\n- Migration SQL at `packages/db/prisma/migrations/20260312100000_add_channel_sync_models/`\n\n### Services (T-002 to T-010)\n- **CredentialEncryptionService** — AES-256-GCM encrypt/decrypt with CHANNEL_ENCRYPTION_KEY env var (7 tests)\n- **ChannelConnectionService** — CRUD, encrypts tokens on create, never exposes tokens in DTOs (6 tests)\n- **SyncDispatcherService** — `@Cron(EVERY_MINUTE)`, isDue() check, concurrency guard Set, triggerNow() (6 tests)\n- **SyncExecutorService** — Orchestration with adapter registry, retry with exponential backoff, SyncLog writes (7 tests)\n- **ShopeeAdapter** — OAuth URL, code exchange, token refresh, fetchOrders with pagination, HMAC-SHA256 signing (8 tests)\n- **OAuthController + OAuthService** — State generation/validation, redirect flow, callback handling (7 tests)\n- **OrderMapperService** — mapShopeeOrder, mapShopeeStatus (5 statuses + unknown), mapTikTokStatus (6 statuses + unknown) (17 tests)\n- **Error classes** — RateLimitError, AuthExpiredError, NetworkError, MappingError with errorType + humanMessage\n\n### Admin API (T-011)\n- **AdminChannelsController** — GET /admin/channels, POST /:id/sync (202), PATCH /:id, DELETE /:id, GET /:id/logs (6 tests)\n- **AdminChannelsService** — delegates to ChannelConnectionService + SyncDispatcher, paginated logs, interval validation (5-15 min)\n\n### Module wiring\n- `ChannelsModule` → imports ScheduleModule.forRoot(), registered in AppModule\n- `AdminChannelsModule` → imports ChannelsModule, registered in AdminModule\n- Adapter registry pattern: adapters registered in onModuleInit\n\n## Files created/modified\n- `packages/db/prisma/schema.prisma` — ChannelConnection, SyncLog models + enums\n- `packages/db/src/index.ts` — new type exports\n- `apps/api/src/channels/` — 10 new files (module, services, adapter, controller, tests)\n- `apps/api/src/admin/channels/` — 4 new files (module, controller, service, test)\n- `apps/api/src/app.module.ts` — ChannelsModule import\n- `apps/api/src/admin/admin.module.ts` — AdminChannelsModule import",
+    "summary": "All T-001 to T-011 complete, 64 tests passing",
+    "timestamp": "2026-03-12T15:52:07.421Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "backend-core",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"backend-core\",\"timestamp\":\"2026-03-12T15:52:14.933Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-12T15:52:14.933Z",
+    "color": "blue",
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"task_assignment\",\"taskId\":\"2\",\"subject\":\"Phase 2a: backend-tiktok agent (T-012 to T-018, T-021, T-022)\",\"description\":\"Downstream agent: TikTok adapter, status mapping, admin GET API, error types, cleanup job. 9 tasks. Depends on Phase 1 completion.\",\"assignedBy\":\"team-lead\",\"timestamp\":\"2026-03-12T15:52:21.373Z\"}",
+    "timestamp": "2026-03-12T15:52:21.373Z",
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"task_assignment\",\"taskId\":\"3\",\"subject\":\"Phase 2b: frontend agent (T-019, T-020)\",\"description\":\"Downstream agent: Admin Channel Settings page, Sync Logs UI. 2 tasks. Depends on Phase 1 completion.\",\"assignedBy\":\"team-lead\",\"timestamp\":\"2026-03-12T15:52:21.493Z\"}",
+    "timestamp": "2026-03-12T15:52:21.493Z",
+    "read": true
+  },
+  {
+    "from": "backend-tiktok",
+    "text": "PLAN_READY\n\nIncrement: 0010-channel-sync-tiktok\nFiles: .specweave/increments/0010-channel-sync-tiktok/ (metadata.json, spec.md, plan.md, tasks.md)\n\n## Summary\n\nAfter reading all upstream contracts, I found that 4 of my 9 assigned tasks are already complete:\n- **T-012**: Shopee status mapping - fully implemented with tests\n- **T-013**: TikTok status mapping - fully implemented with tests  \n- **T-018**: Admin GET endpoints - fully implemented with tests\n- **T-021**: SyncLog error types - fully implemented with tests\n\nRemaining work (4 tasks):\n1. **T-016**: Add `mapTikTokOrder()` method to OrderMapperService (maps raw TikTok API response to ExternalOrder)\n2. **T-014 + T-015**: Create TikTokAdapter implementing ChannelAdapter interface (OAuth URL, code exchange, token refresh, fetchOrders with pagination and rate-limit handling) - mirrors ShopeeAdapter pattern exactly\n3. **T-017**: Register TikTokAdapter in ChannelsModule + write integration test\n4. **T-022**: Create SyncLogCleanupService with @Cron daily job for 30-day retention\n\nImplementation order: T-016 -> T-014/T-015 -> T-017 -> T-022\nAll follow TDD: tests first, then implementation.\n\nAwaiting PLAN_APPROVED to begin.",
+    "summary": "PLAN_READY for TikTok backend tasks",
+    "timestamp": "2026-03-12T15:54:34.654Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "backend-tiktok",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"backend-tiktok\",\"timestamp\":\"2026-03-12T15:54:40.947Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-12T15:54:40.947Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "frontend",
+    "text": "PLAN_READY\n\nIncrement: 0011-channel-sync-frontend\nTasks: T-019 (Channel Settings Page), T-020 (Sync Logs View + Connect OAuth Flow)\n\n## Plan Summary\n\n### Existing Patterns Identified\n- Next.js App Router with `(dashboard)` route group layout (Sidebar + Header)\n- Client-side data fetching via `apiFetch()` from `@/lib/api`\n- Reusable components: `DataTable`, `Pagination`, `StatusBadge`, `ChannelBadge`\n- Tailwind CSS v4 styling, consistent button/input patterns\n- Constants in `@/lib/constants.ts` (already has CHANNEL_COLORS for Shopee/TikTok)\n\n### File Plan\n```\napps/admin/src/app/(dashboard)/channels/\n  page.tsx              — Main channel settings page (T-019)\n  channel-card.tsx      — ChannelCard client component with sync/toggle/interval controls\n  sync-logs-drawer.tsx  — Sync logs slide-over panel with DataTable (T-020)\n\napps/admin/src/components/sidebar.tsx — Add \"Channels\" nav item\n```\n\n### T-019: Channel Settings Page\n- `page.tsx`: Fetches GET /admin/channels, renders channel cards for connected shops + \"Connect\" buttons for unconnected channels\n- `channel-card.tsx`: Shows shop name, channel badge, sync status badge (SUCCESS=green, FAILED=red, RUNNING=yellow), relative last sync time, \"Sync Now\" button with loading spinner, toggle for syncEnabled, dropdown for interval (5/10/15 min), \"Disconnect\" with confirm, \"View Logs\" button\n\n### T-020: Sync Logs + Connect Flow\n- `sync-logs-drawer.tsx`: Slide-over panel using existing DataTable + Pagination. Columns: Time, Status, Fetched, Created, Updated, Duration, Error. Error rows show errorType chip + errorMessage\n- Connect button: `<a href>` to `GET /channels/oauth/:channel` (server-side redirect)\n\n### Testing\n- Vitest + @testing-library/react + jsdom (existing setup)\n- Mock `apiFetch` for all API calls\n- Test file: `apps/admin/src/app/(dashboard)/channels/__tests__/channels.test.tsx`\n\nAwaiting PLAN_APPROVED to begin implementation.",
+    "summary": "PLAN_READY: Frontend T-019, T-020 plan",
+    "timestamp": "2026-03-12T15:54:53.879Z",
+    "color": "yellow",
+    "read": true
+  },
+  {
+    "from": "frontend",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"frontend\",\"timestamp\":\"2026-03-12T15:54:56.142Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-12T15:54:56.142Z",
+    "color": "yellow",
+    "read": true
+  },
+  {
+    "from": "frontend",
+    "text": "COMPLETION\n\nBoth tasks T-019 and T-020 are implemented and all 11 tests pass.\n\n## Files Created/Modified\n\n**New files:**\n- `apps/admin/src/app/(dashboard)/channels/page.tsx` — Main channel settings page\n- `apps/admin/src/app/(dashboard)/channels/channel-card.tsx` — ChannelCard component with sync/toggle/interval/disconnect controls\n- `apps/admin/src/app/(dashboard)/channels/sync-logs-drawer.tsx` — Slide-over panel with paginated sync log table\n- `apps/admin/src/app/(dashboard)/channels/__tests__/channels.test.tsx` — 11 unit tests\n\n**Modified files:**\n- `apps/admin/src/components/sidebar.tsx` — Added \"Channels\" nav item\n- `apps/admin/vitest.config.ts` — Added `@/` path alias + excluded `e2e/` dir (was failing on playwright import)\n\n## Test Results\n```\n ✓ src/__tests__/dashboard-page.test.tsx (1 test)\n ✓ src/app/(dashboard)/channels/__tests__/channels.test.tsx (10 tests)\n Test Files  2 passed (2)\n      Tests  11 passed (11)\n```\n\n## What was built\n\n**T-019 - Channel Settings Page:**\n- `/admin/channels` page showing Shopee and TikTok sections\n- Connected shops render as ChannelCard with: shop name, channel badge, sync status badge (color-coded), relative last sync time\n- \"Sync Now\" button with loading state -> POST /admin/channels/:id/sync\n- Toggle switch for syncEnabled -> PATCH /admin/channels/:id\n- Dropdown for interval (5/10/15 min) -> PATCH /admin/channels/:id\n- \"Disconnect\" button with confirmation dialog -> DELETE /admin/channels/:id\n- Unconnected channels show dashed card with \"Connect\" button\n\n**T-020 - Sync Logs + Connect Flow:**\n- SyncLogsDrawer slide-over panel using existing DataTable + Pagination\n- Columns: Time, Status (color badges), Fetched, Created, Updated, Duration, Error\n- Error rows show errorType chip (color-coded by type) + errorMessage text\n- Connect buttons link to `GET /channels/oauth/:channel` for OAuth redirect\n- \"Connect Another Shop\" button for channels with existing connections\n\nAll UI follows existing patterns (apiFetch, DataTable, StatusBadge/ChannelBadge, Tailwind styling).",
+    "summary": "COMPLETION: T-019 and T-020 implemented, 11 tests pass",
+    "timestamp": "2026-03-12T15:57:58.854Z",
+    "color": "yellow",
+    "read": true
+  },
+  {
+    "from": "frontend",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"frontend\",\"timestamp\":\"2026-03-12T15:58:02.349Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-12T15:58:02.349Z",
+    "color": "yellow",
+    "read": true
+  },
+  {
+    "from": "backend-tiktok",
+    "text": "COMPLETION\n\nAll backend-tiktok tasks are done. Test results: **43 tests passing across 5 test files** (0 failures in my scope).\n\n## Files Created\n- `apps/api/src/channels/adapters/tiktok.adapter.ts` - TikTokAdapter implementing ChannelAdapter (OAuth, token refresh, fetchOrders with pagination + rate-limit)\n- `apps/api/src/channels/adapters/tiktok.adapter.spec.ts` - 14 tests (OAuth URL, exchangeCode, sign, refresh, fetchOrders with pagination/rate-limit/field mapping/missing fields)\n- `apps/api/src/channels/sync/sync-log-cleanup.service.ts` - @Cron daily midnight job, deletes SyncLog entries older than 30 days\n- `apps/api/src/channels/sync/sync-log-cleanup.service.spec.ts` - 3 tests\n- `apps/api/src/channels/sync/tiktok-sync.integration.spec.ts` - 4 tests (full sync, resync update, success log, rate-limit retry)\n\n## Files Modified\n- `apps/api/src/channels/channels.module.ts` - Added TikTokAdapter + SyncLogCleanupService as providers, registered TikTok adapter in onModuleInit()\n\n## Task Status\n- T-012, T-013, T-018, T-021: Verified already complete by backend-core\n- T-014: TikTokAdapter OAuth - DONE\n- T-015: TikTokAdapter token refresh + fetchOrders - DONE\n- T-016: TikTok order mapping (via TikTokAdapter.mapRawOrder + OrderMapperService.mapOrder) - DONE\n- T-017: SyncExecutor TikTok integration + ChannelsModule registration - DONE\n- T-022: SyncLogCleanupService - DONE\n\nNote: The 2 pre-existing test failures (aov-by-channel.integration, reseller-performance.integration) are unrelated — they require DATABASE_URL which is not set in this environment.",
+    "summary": "COMPLETION: All TikTok backend tasks done, 43 tests passing",
+    "timestamp": "2026-03-12T15:58:50.834Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "backend-tiktok",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"backend-tiktok\",\"timestamp\":\"2026-03-12T15:58:56.626Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-12T15:58:56.626Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "backend-tiktok",
+    "text": "{\"type\":\"idle_notification\",\"from\":\"backend-tiktok\",\"timestamp\":\"2026-03-12T15:59:00.077Z\",\"idleReason\":\"available\"}",
+    "timestamp": "2026-03-12T15:59:00.077Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"task_assignment\",\"taskId\":\"4\",\"subject\":\"Centralized closure: grill + done for all increments\",\"description\":\"After all agents complete, run /sw:grill and /sw:done for each increment sequentially. Then /sw:team-merge.\",\"assignedBy\":\"team-lead\",\"timestamp\":\"2026-03-12T15:59:03.255Z\"}",
+    "timestamp": "2026-03-12T15:59:03.255Z",
+    "read": true
+  },
+  {
+    "from": "frontend",
+    "text": "{\"type\":\"shutdown_approved\",\"requestId\":\"shutdown-1773331149055@frontend\",\"from\":\"frontend\",\"timestamp\":\"2026-03-12T15:59:12.811Z\",\"paneId\":\"in-process\",\"backendType\":\"in-process\"}",
+    "timestamp": "2026-03-12T15:59:12.811Z",
+    "color": "yellow",
+    "read": true
+  },
+  {
+    "from": "backend-tiktok",
+    "text": "{\"type\":\"shutdown_approved\",\"requestId\":\"shutdown-1773331148920@backend-tiktok\",\"from\":\"backend-tiktok\",\"timestamp\":\"2026-03-12T15:59:13.016Z\",\"paneId\":\"in-process\",\"backendType\":\"in-process\"}",
+    "timestamp": "2026-03-12T15:59:13.016Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "backend-core",
+    "text": "{\"type\":\"shutdown_approved\",\"requestId\":\"shutdown-1773331147986@backend-core\",\"from\":\"backend-core\",\"timestamp\":\"2026-03-12T15:59:14.190Z\",\"paneId\":\"in-process\",\"backendType\":\"in-process\"}",
+    "timestamp": "2026-03-12T15:59:14.190Z",
+    "color": "blue",
+    "read": true
+  }
+]

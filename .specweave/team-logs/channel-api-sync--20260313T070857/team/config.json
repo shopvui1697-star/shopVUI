@@ -1,0 +1,19 @@
+{
+  "name": "channel-api-sync",
+  "description": "Building Channel API Sync (Shopee & TikTok Shop) across backend-core, backend-tiktok, and frontend domains",
+  "createdAt": 1773329017726,
+  "leadAgentId": "team-lead@channel-api-sync",
+  "leadSessionId": "7438fa3a-3429-4019-bdfc-24d2704db1c0",
+  "members": [
+    {
+      "agentId": "team-lead@channel-api-sync",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "model": "claude-opus-4-6",
+      "joinedAt": 1773329017726,
+      "tmuxPaneId": "",
+      "cwd": "/Users/honda/shopvui",
+      "subscriptions": []
+    }
+  ]
+}

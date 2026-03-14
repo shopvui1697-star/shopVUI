@@ -1,0 +1,55 @@
+{
+  "version": "1.0",
+  "incrementId": "0002-google-oauth",
+  "timestamp": "2026-03-10T21:25:00.000Z",
+  "verdict": "PASS",
+  "shipReadiness": "NEEDS REVIEW",
+  "summary": {
+    "totalFindings": 4,
+    "critical": 0,
+    "high": 2,
+    "medium": 2
+  },
+  "findings": [
+    {
+      "title": "JWT tokens exposed in URL query params during OAuth callback",
+      "severity": "high",
+      "confidence": 90,
+      "category": "security",
+      "file": "apps/api/src/auth/auth.controller.ts:39",
+      "issue": "Tokens passed as URL query params are logged in server access logs and browser history",
+      "suggestion": "Use authorization code pattern or fragment-based redirect in a follow-up",
+      "status": "acknowledged"
+    },
+    {
+      "title": "No state parameter validation in Google OAuth callback",
+      "severity": "high",
+      "confidence": 85,
+      "category": "security",
+      "file": "apps/api/src/auth/auth.controller.ts:37",
+      "issue": "State parameter used as redirect URL without allowlist validation — open redirect risk",
+      "suggestion": "Validate state against WEB_URL and ADMIN_URL allowlist",
+      "status": "fixed"
+    },
+    {
+      "title": "refreshTokens throws generic Error instead of NestJS exception",
+      "severity": "medium",
+      "confidence": 75,
+      "category": "correctness",
+      "file": "apps/api/src/auth/auth.service.ts:69",
+      "issue": "Generic Error instead of UnauthorizedException; mitigated by controller catch",
+      "suggestion": "Use UnauthorizedException in service",
+      "status": "acknowledged"
+    },
+    {
+      "title": "Duplicate auth code across web and admin apps",
+      "severity": "medium",
+      "confidence": 80,
+      "category": "maintainability",
+      "file": "apps/web/app/lib/auth.ts",
+      "issue": "auth.ts, auth-context.tsx, auth-guard.tsx nearly identical in both apps",
+      "suggestion": "Extract to shared package in follow-up increment",
+      "status": "acknowledged"
+    }
+  ]
+}

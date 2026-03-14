@@ -1,0 +1,12 @@
+{
+  "increment": "0009-channel-sync-core",
+  "title": "Channel Sync Core - Backend Services (T-001 to T-011)",
+  "status": "completed",
+  "type": "feature",
+  "created": "2026-03-12",
+  "parent_increment": "0008-channel-api-sync",
+  "agent": "backend-core",
+  "updated": "2026-03-12T15:51:34.000Z",
+  "lastActivity": "2026-03-13T00:15:00.000Z",
+  "approvedAt": "2026-03-13T00:15:00.000Z"
+}

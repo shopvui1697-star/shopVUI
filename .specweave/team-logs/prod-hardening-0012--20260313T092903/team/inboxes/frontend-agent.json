@@ -1,0 +1,15 @@
+[
+  {
+    "from": "team-lead",
+    "text": "PLAN_APPROVED: Go ahead with implementation. Good observations on web app using inline styles vs admin using Tailwind. Proceed with all 3 tasks.",
+    "summary": "Frontend plan approved, proceed",
+    "timestamp": "2026-03-13T00:43:30.936Z",
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"shutdown_request\",\"requestId\":\"shutdown-1773362907637@frontend-agent\",\"from\":\"team-lead\",\"reason\":\"All frontend tasks complete. Shutting down. Great work!\",\"timestamp\":\"2026-03-13T00:48:27.637Z\"}",
+    "timestamp": "2026-03-13T00:48:27.637Z",
+    "read": true
+  }
+]

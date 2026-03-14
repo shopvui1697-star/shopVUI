@@ -1,0 +1,12 @@
+[isClaudeCliAvailable] Running fresh detection (no cache)...
+[isClaudeCliAvailable] Claude CLI available: version=2.1.74 (Claude Code), path=/Users/honda/.local/bin/claude, method=binary
+[executeClaudeCli] Using direct binary: /Users/honda/.local/bin/claude
+Extracted result from JSON wrapper, duration_ms: 10500
+Invalid LLM response format: I need permission to read the task output file to determine which plugins should be loaded. The notification shows a background test failure check was completed, but I need to see the actual test resu
+{
+  "detected": false,
+  "plugins": [],
+  "confidence": 0,
+  "latencyMs": 11851.301667,
+  "installMessage": "Invalid response format (no JSON found)"
+}

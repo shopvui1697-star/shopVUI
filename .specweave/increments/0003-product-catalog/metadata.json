@@ -1,0 +1,26 @@
+{
+  "id": "0003-product-catalog",
+  "title": "Product Catalog (Read-Only)",
+  "type": "feature",
+  "status": "completed",
+  "completedAt": "2026-03-11T13:48:00.000Z",
+  "techStack": [
+    "TypeScript",
+    "Next.js 15",
+    "NestJS",
+    "Prisma",
+    "PostgreSQL",
+    "React 19"
+  ],
+  "dependencies": [
+    "0001-project-setup",
+    "0002-google-oauth"
+  ],
+  "updated": "2026-03-11T13:47:32.000Z",
+  "created": "2026-03-10T00:00:00.000Z",
+  "externalLinks": {},
+  "priority": "medium",
+  "lastActivity": "2026-03-11T13:47:32.000Z",
+  "testMode": "test-after",
+  "coverageTarget": 80
+}

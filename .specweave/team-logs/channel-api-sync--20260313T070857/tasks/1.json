@@ -1,0 +1,14 @@
+{
+  "id": "1",
+  "subject": "Phase 1: backend-core agent (T-001 to T-011)",
+  "description": "Upstream agent: DB schema, encryption, core services, Shopee adapter, OAuth controller, admin channels controller. 11 tasks. Must complete before Phase 2.",
+  "activeForm": "Running backend-core agent (Phase 1)",
+  "owner": "team-lead",
+  "status": "completed",
+  "blocks": [
+    "2",
+    "3",
+    "4"
+  ],
+  "blockedBy": []
+}

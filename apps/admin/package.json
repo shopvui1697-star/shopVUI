@@ -1,0 +1,37 @@
+{
+  "name": "admin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --port 3001",
+    "build": "next build",
+    "start": "next start --port 3001",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@shopvui/shared": "workspace:*",
+    "@shopvui/ui": "workspace:*",
+    "next": "^15.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^3.8.0"
+  },
+  "devDependencies": {
+    "@shopvui/eslint-config": "workspace:*",
+    "@shopvui/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "^4.2.1",
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "25.5.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^5.1.4",
+    "jsdom": "^25.0.0",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}

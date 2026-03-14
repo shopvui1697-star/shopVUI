@@ -1,0 +1,13 @@
+{
+  "id": "6",
+  "subject": "backend-tiktok",
+  "description": "You are the BACKEND-TIKTOK agent for increment 0010-channel-sync-tiktok in team \"channel-api-sync\".\n",
+  "activeForm": "Implementing TikTok backend tasks",
+  "owner": "backend-tiktok",
+  "status": "completed",
+  "blocks": [],
+  "blockedBy": [],
+  "metadata": {
+    "_internal": true
+  }
+}

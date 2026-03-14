@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: shopvui
+      POSTGRES_PASSWORD: shopvui_dev
+      POSTGRES_DB: shopvui
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app/apps/web
+      - ./packages:/app/packages
+      - ./tooling:/app/tooling
+      - web_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile.dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./apps/admin:/app/apps/admin
+      - ./packages:/app/packages
+      - ./tooling:/app/tooling
+      - admin_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+
+  api:
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile.dev
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./apps/api:/app/apps/api
+      - ./packages:/app/packages
+      - ./tooling:/app/tooling
+      - api_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://shopvui:shopvui_dev@postgres:5432/shopvui
+
+volumes:
+  postgres_data:
+  web_node_modules:
+  admin_node_modules:
+  api_node_modules:

@@ -1,0 +1,15 @@
+[
+  {
+    "from": "team-lead",
+    "text": "PLAN_APPROVED: Plan looks great — good use of existing patterns (apiFetch, DataTable, StatusBadge, ChannelBadge). File structure is clean. Proceed with T-019 first (page + channel-card), then T-020 (sync-logs-drawer + connect flow). Don't forget to add the \"Channels\" nav item to sidebar.tsx.",
+    "summary": "Plan approved, proceed with implementation",
+    "timestamp": "2026-03-12T15:55:04.366Z",
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"shutdown_request\",\"requestId\":\"shutdown-1773331149055@frontend\",\"from\":\"team-lead\",\"reason\":\"All work complete. Shutting down team. Thank you.\",\"timestamp\":\"2026-03-12T15:59:09.055Z\"}",
+    "timestamp": "2026-03-12T15:59:09.055Z",
+    "read": true
+  }
+]

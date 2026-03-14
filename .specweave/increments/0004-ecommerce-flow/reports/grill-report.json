@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "incrementId": "0004-ecommerce-flow",
+  "timestamp": "2026-03-11T21:43:00.000Z",
+  "verdict": "PASS",
+  "shipReadiness": "NEEDS REVIEW",
+  "summary": {
+    "totalFindings": 7,
+    "suppressed": 12,
+    "critical": 0,
+    "high": 3,
+    "medium": 4
+  },
+  "findings": [
+    {
+      "title": "Coupon usage race condition on global/per-user limits",
+      "severity": "high",
+      "confidence": 80,
+      "category": "correctness",
+      "file": "apps/api/src/coupons/coupons.service.ts:37-52",
+      "issue": "Coupon validation counts usage in separate queries outside the checkout transaction. Concurrent requests can exceed limits between count check and usage recording.",
+      "suggestion": "Move coupon usage count + recording into the checkout $transaction with SELECT FOR UPDATE.",
+      "impact": "Multiple concurrent checkouts could exceed coupon usage limits. Low probability at current scale but grows with traffic.",
+      "status": "deferred"
+    },
+    {
+      "title": "Payment initiation outside transaction boundary",
+      "severity": "high",
+      "confidence": 75,
+      "category": "correctness",
+      "file": "apps/api/src/checkout/checkout.service.ts:149-155",
+      "issue": "Payment initiation (VNPay/Momo URL generation) happens after the order transaction. If the response is lost and user retries, a duplicate order is created.",
+      "suggestion": "Add idempotency key header support to place-order endpoint and check for existing orders before creating.",
+      "impact": "Potential duplicate orders on network timeouts. Low probability but high cost.",
+      "status": "deferred"
+    },
+    {
+      "title": "Missing proper admin role guard (JWT only, no role check)",
+      "severity": "high",
+      "confidence": 85,
+      "category": "security",
+      "file": "apps/api/src/coupons/coupons.controller.ts, apps/api/src/price-tiers/price-tiers.controller.ts",
+      "issue": "Admin endpoints now require JWT auth (fixed from completely open), but there is no admin role check. Any authenticated user can create coupons and modify pricing.",
+      "suggestion": "Create an AdminGuard that checks user role, or add role field to User model and check in guard.",
+      "impact": "Any logged-in customer can create coupons and change product prices. Mitigated by the fact that admin UI doesn't exist yet.",
+      "status": "deferred-to-admin-increment"
+    },
+    {
+      "title": "No payment webhook logging",
+      "severity": "medium",
+      "confidence": 85,
+      "category": "maintainability",
+      "file": "apps/api/src/payments/payments.service.ts:41-87",
+      "issue": "IPN handlers have no logging. Failed payments will be silent and undebuggable.",
+      "suggestion": "Add NestJS Logger calls at each checkpoint (signature check, order lookup, status update).",
+      "impact": "Debugging payment failures requires code changes. Not blocking for launch.",
+      "status": "open"
+    },
+    {
+      "title": "Checkout page missing error catch on initial load",
+      "severity": "medium",
+      "confidence": 90,
+      "category": "correctness",
+      "file": "apps/web/src/app/checkout/page.tsx:33-40",
+      "issue": "Promise.all for loading addresses and preview has no .catch() handler. If API fails, loading state stays true forever.",
+      "suggestion": "Add .catch() to set an error state and stop loading.",
+      "impact": "User sees 'Loading checkout...' indefinitely if API is down.",
+      "status": "open"
+    },
+    {
+      "title": "Token retrieval from localStorage on every render",
+      "severity": "medium",
+      "confidence": 75,
+      "category": "maintainability",
+      "file": "apps/web/src/app/checkout/page.tsx, orders/page.tsx, etc.",
+      "issue": "Multiple pages read token directly from localStorage instead of using a centralized auth context. Token changes won't trigger re-renders.",
+      "suggestion": "Create AuthContext that provides token and wraps the app. Consistent pattern, reactive to login/logout.",
+      "impact": "UX inconsistency after login/logout. Not blocking for initial launch.",
+      "status": "deferred"
+    },
+    {
+      "title": "Checkout coupon Apply button not wired to preview refresh",
+      "severity": "medium",
+      "confidence": 80,
+      "category": "correctness",
+      "file": "apps/web/src/app/checkout/page.tsx:216-220",
+      "issue": "Checkout page coupon Apply button has no onClick handler. Coupon code is collected but not applied to preview.",
+      "suggestion": "Wire button to call previewCheckout(token, couponCode) and update preview state.",
+      "impact": "Coupon code on checkout page is cosmetic only. Cart page coupon now works (fixed). Users must apply coupon on cart page.",
+      "status": "open"
+    }
+  ],
+  "fixesApplied": [
+    "Fixed N+1 query in PriceEngineService.calculateCart() - batch fetch products",
+    "Fixed N+1 query in CartService.mergeGuestCart() - batch fetch active products",
+    "Added quantity validation (must be positive) to CartService.addItem()",
+    "Added JwtAuthGuard to all coupon admin endpoints (create/update/delete)",
+    "Added JwtAuthGuard to all price-tier write endpoints (create/update/delete)",
+    "Added input validation to PriceTiersService.create() (minQty, price, maxQty)",
+    "Wired coupon Apply button on cart page with validateCoupon API call",
+    "Added retry logic to order number generation to handle race conditions"
+  ]
+}

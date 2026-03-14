@@ -37,3 +37,10 @@ tmp/
 .specweave/docs-site-internal/
 .claude-plugin/
 plugins/
+.env.example
+apps/web/.next/
+apps/web/public/sw.js
+apps/web/public/swe-worker-*.js
+apps/admin/.next/
+apps/api/dist/
+.turbo/cache/

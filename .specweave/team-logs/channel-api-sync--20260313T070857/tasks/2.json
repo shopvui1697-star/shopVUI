@@ -1,0 +1,14 @@
+{
+  "id": "2",
+  "subject": "Phase 2a: backend-tiktok agent (T-012 to T-018, T-021, T-022)",
+  "description": "Downstream agent: TikTok adapter, status mapping, admin GET API, error types, cleanup job. 9 tasks. Depends on Phase 1 completion.",
+  "activeForm": "Running backend-tiktok agent (Phase 2)",
+  "owner": "team-lead",
+  "status": "completed",
+  "blocks": [
+    "4"
+  ],
+  "blockedBy": [
+    "1"
+  ]
+}

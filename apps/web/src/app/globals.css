@@ -1,0 +1,68 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/container-queries';
+@plugin '@tailwindcss/typography';
+
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+*,
+::before,
+::after {
+  border-color: theme(--color-neutral-200);
+}
+:where(.dark, .dark *) *,
+:where(.dark, .dark *) ::before,
+:where(.dark, .dark *) ::after {
+  border-color: theme(--color-neutral-800);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light) {
+    color-scheme: dark;
+  }
+}
+
+/* iOS image rendering fix */
+img[loading='lazy'] {
+  -webkit-clip-path: inset(0.6px);
+  clip-path: inset(0.6px);
+}
+
+/* Focus styles */
+a:focus-visible,
+input:focus-visible,
+button:focus-visible {
+  @apply ring-2 ring-neutral-400 ring-offset-2 ring-offset-white outline-none dark:ring-neutral-600 dark:ring-offset-black;
+}
+
+/* Carousel animation */
+@keyframes carousel {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% / 3));
+  }
+}
+
+.animate-carousel {
+  animation: carousel 60s linear infinite;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}

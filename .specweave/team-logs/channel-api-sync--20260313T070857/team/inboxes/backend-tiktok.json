@@ -1,0 +1,22 @@
+[
+  {
+    "from": "team-lead",
+    "text": "PLAN_APPROVED: Good analysis — correctly identified the 4 already-completed tasks. Proceed with your remaining 4 tasks in the order you proposed: T-016 → T-014/T-015 → T-017 → T-022. Follow the ShopeeAdapter patterns exactly for TikTokAdapter.",
+    "summary": "Plan approved, proceed with implementation",
+    "timestamp": "2026-03-12T15:54:48.299Z",
+    "read": true
+  },
+  {
+    "from": "backend-tiktok",
+    "text": "{\"type\":\"task_assignment\",\"taskId\":\"6\",\"subject\":\"backend-tiktok\",\"description\":\"You are the BACKEND-TIKTOK agent for increment 0010-channel-sync-tiktok in team \\\"channel-api-sync\\\".\\n\",\"assignedBy\":\"backend-tiktok\",\"timestamp\":\"2026-03-12T15:54:53.472Z\"}",
+    "timestamp": "2026-03-12T15:54:53.472Z",
+    "color": "green",
+    "read": true
+  },
+  {
+    "from": "team-lead",
+    "text": "{\"type\":\"shutdown_request\",\"requestId\":\"shutdown-1773331148920@backend-tiktok\",\"from\":\"team-lead\",\"reason\":\"All work complete. Shutting down team. Thank you.\",\"timestamp\":\"2026-03-12T15:59:08.920Z\"}",
+    "timestamp": "2026-03-12T15:59:08.920Z",
+    "read": true
+  }
+]

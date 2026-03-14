@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "incrementId": "0008-channel-api-sync",
+  "timestamp": "2026-03-12T16:05:00.000Z",
+  "verdict": "PASS",
+  "shipReadiness": "NEEDS REVIEW",
+  "summary": {
+    "totalFindings": 5,
+    "critical": 0,
+    "high": 3,
+    "medium": 2
+  },
+  "findings": [
+    {
+      "title": "Private encryptionService accessed via `as any` cast in adapters",
+      "severity": "high",
+      "confidence": 90,
+      "category": "maintainability",
+      "file": "apps/api/src/channels/adapters/shopee.adapter.ts:100",
+      "issue": "Both adapters access (this.connectionService as any).encryptionService.encrypt() bypassing type safety",
+      "suggestion": "Add updateTokens(id, accessToken, refreshToken, expiresAt) to ChannelConnectionService",
+      "status": "fixed"
+    },
+    {
+      "title": "OAuth callback determines channel by shop_id presence",
+      "severity": "high",
+      "confidence": 85,
+      "category": "correctness",
+      "file": "apps/api/src/channels/oauth/oauth.controller.ts:67",
+      "suggestion": "Encode channel in OAuth state token",
+      "status": "fixed"
+    },
+    {
+      "title": "Order number generation race condition",
+      "severity": "high",
+      "confidence": 80,
+      "category": "correctness",
+      "file": "apps/api/src/channels/sync/sync-executor.service.ts:188-208",
+      "suggestion": "Use DB sequence or transaction with retry on conflict",
+      "status": "accepted_risk",
+      "notes": "Single-process deployment with concurrency guard minimizes risk. Tracked for future hardening."
+    },
+    {
+      "title": "tick() fires-and-forgets with no error catch",
+      "severity": "medium",
+      "confidence": 75,
+      "category": "correctness",
+      "file": "apps/api/src/channels/sync/sync-dispatcher.service.ts:29-31",
+      "suggestion": "Add .catch() after .finally()",
+      "status": "fixed"
+    },
+    {
+      "title": "OAuth state stored in-memory only",
+      "severity": "medium",
+      "confidence": 72,
+      "category": "correctness",
+      "file": "apps/api/src/channels/oauth/oauth.service.ts:14",
+      "suggestion": "Document limitation; migrate to Redis if horizontal scaling planned",
+      "status": "accepted_risk",
+      "notes": "Acceptable for single-process per ADR-0003"
+    }
+  ]
+}

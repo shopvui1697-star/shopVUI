@@ -1,0 +1,19 @@
+{
+  "name": "prod-hardening-0012",
+  "description": "Production readiness hardening: backend (validation, security, error handling, logging, DB indexes) + frontend (error boundaries, loading states, SEO)",
+  "createdAt": 1773362506540,
+  "leadAgentId": "team-lead@prod-hardening-0012",
+  "leadSessionId": "7438fa3a-3429-4019-bdfc-24d2704db1c0",
+  "members": [
+    {
+      "agentId": "team-lead@prod-hardening-0012",
+      "name": "team-lead",
+      "agentType": "team-lead",
+      "model": "claude-opus-4-6",
+      "joinedAt": 1773362506540,
+      "tmuxPaneId": "",
+      "cwd": "/Users/honda/shopvui",
+      "subscriptions": []
+    }
+  ]
+}
