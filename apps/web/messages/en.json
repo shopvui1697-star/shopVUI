@@ -342,10 +342,10 @@
   "language": {
     "en": "English",
     "vi": "Tiếng Việt",
-    "switchTo": "Switch language"
+    "switchTo": "Language"
   },
   "theme": {
-    "switchToLight": "Switch to light mode",
-    "switchToDark": "Switch to dark mode"
+    "switchToLight": "Light mode",
+    "switchToDark": "Dark mode"
   }
 }
