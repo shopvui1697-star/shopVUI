@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { prisma } from '@shopvui/db';
 import { STORAGE_ADAPTER, type IStorageAdapter } from '../storage/storage.interface';
-import type { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
-import type { CreatePriceTierDto, UpdatePriceTierDto } from './dto/price-tier.dto';
+import { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
+import { CreatePriceTierDto, UpdatePriceTierDto } from './dto/price-tier.dto';
 import { rangesOverlap } from './price-tier-overlap.util';
 
 @Injectable()
@@ -144,6 +144,29 @@ export class AdminProductsService {
         sortOrder: (maxSort?.sortOrder ?? -1) + 1,
       },
     });
+  }
+
+  async updateImage(productId: string, imageId: string, data: { alt?: string }) {
+    await this.ensureProductExists(productId);
+    const image = await prisma.productImage.findFirst({
+      where: { id: imageId, productId },
+    });
+    if (!image) throw new NotFoundException('Image not found');
+
+    return prisma.productImage.update({
+      where: { id: imageId },
+      data: { alt: data.alt ?? null },
+    });
+  }
+
+  async deleteImage(productId: string, imageId: string) {
+    await this.ensureProductExists(productId);
+    const image = await prisma.productImage.findFirst({
+      where: { id: imageId, productId },
+    });
+    if (!image) throw new NotFoundException('Image not found');
+
+    await prisma.productImage.delete({ where: { id: imageId } });
   }
 
   async getPriceTiers(productId: string) {

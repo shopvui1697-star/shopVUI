@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Body, UseGuards, Request } from '@nestjs/common';
 import { ResellersService } from './resellers.service';
 import { ResellerGuard } from './guards/reseller.guard';
-import type { ProposeResellerCouponDto } from './dto/coupon.dto';
+import { ProposeResellerCouponDto } from './dto/coupon.dto';
 
 @Controller('resellers')
 export class ResellersController {

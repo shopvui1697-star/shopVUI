@@ -69,7 +69,7 @@ export class AdminAnalyticsService {
         DATE_TRUNC(${Prisma.raw(`'${truncUnit}'`)}, created_at) AS period,
         SUM(total) AS revenue,
         COUNT(id) AS order_count
-      FROM "Order"
+      FROM "orders"
       WHERE status != 'CANCELLED'
       ${dateFrom ? Prisma.sql`AND created_at >= ${new Date(dateFrom)}::timestamp` : Prisma.empty}
       ${dateTo ? Prisma.sql`AND created_at <= ${new Date(dateTo)}::timestamp` : Prisma.empty}
@@ -190,7 +190,7 @@ export class AdminAnalyticsService {
           channel,
           AVG(total) AS aov,
           COUNT(id) AS order_count
-        FROM "Order"
+        FROM "orders"
         WHERE status != 'CANCELLED'
         ${dateFrom ? Prisma.sql`AND created_at >= ${new Date(dateFrom)}::timestamp` : Prisma.empty}
         ${dateTo ? Prisma.sql`AND created_at <= ${new Date(dateTo)}::timestamp` : Prisma.empty}
@@ -304,6 +304,58 @@ export class AdminAnalyticsService {
       },
       resellers: resellerRows,
     };
+  }
+
+  async couponPerformance(dateFrom?: string, dateTo?: string) {
+    const dateFilter = this.buildDateFilter(dateFrom, dateTo);
+
+    const coupons = await prisma.coupon.findMany({
+      select: {
+        id: true,
+        code: true,
+        _count: { select: { usages: true } },
+      },
+    });
+
+    const results = await Promise.all(
+      coupons.map(async (coupon) => {
+        const usages = await prisma.couponUsage.findMany({
+          where: { couponId: coupon.id },
+          select: { orderId: true },
+        });
+
+        const orderIds = usages
+          .map((u) => u.orderId)
+          .filter((id): id is string => id !== null);
+
+        let totalDiscountGiven = 0;
+        let ordersInfluenced = 0;
+
+        if (orderIds.length > 0) {
+          const orderFilter: any = {
+            id: { in: orderIds },
+            ...dateFilter,
+          };
+          const agg = await prisma.order.aggregate({
+            where: orderFilter,
+            _sum: { discountAmount: true },
+            _count: { id: true },
+          });
+          totalDiscountGiven = agg._sum.discountAmount ?? 0;
+          ordersInfluenced = agg._count.id;
+        }
+
+        return {
+          couponId: coupon.id,
+          couponCode: coupon.code,
+          usageCount: coupon._count.usages,
+          totalDiscountGiven,
+          ordersInfluenced,
+        };
+      }),
+    );
+
+    return results.filter((r) => r.usageCount > 0 || r.ordersInfluenced > 0);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

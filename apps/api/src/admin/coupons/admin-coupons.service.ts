@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { prisma } from '@shopvui/db';
-import type { CreateCouponDto, UpdateCouponDto } from './dto/admin-coupon.dto';
+import { CreateCouponDto, UpdateCouponDto } from './dto/admin-coupon.dto';
 
 @Injectable()
 export class AdminCouponsService {

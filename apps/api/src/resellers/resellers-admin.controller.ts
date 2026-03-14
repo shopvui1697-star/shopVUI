@@ -1,7 +1,7 @@
 import { Controller, Get, Put, Param, Query, Body, UseGuards } from '@nestjs/common';
 import { ResellersService } from './resellers.service';
 import { AdminGuard } from './guards/admin.guard';
-import type { ApproveResellerCouponDto } from './dto/coupon.dto';
+import { ApproveResellerCouponDto } from './dto/coupon.dto';
 
 @Controller('admin/resellers')
 @UseGuards(AdminGuard)

@@ -44,3 +44,4 @@ apps/web/public/swe-worker-*.js
 apps/admin/.next/
 apps/api/dist/
 .turbo/cache/
+apps/api/uploads/

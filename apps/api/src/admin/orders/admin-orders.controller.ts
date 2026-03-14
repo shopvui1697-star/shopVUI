@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Post, Param, Query, Body, UseGuards, Res, BadRe
 import type { Response } from 'express';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminOrdersService } from './admin-orders.service';
-import type { UpdateOrderStatusDto, BulkOrderActionDto } from './dto/admin-order-filters.dto';
+import { UpdateOrderStatusDto, BulkOrderActionDto } from './dto/admin-order-filters.dto';
 
 @Controller('admin/orders')
 @UseGuards(AdminGuard)

@@ -1,9 +1,9 @@
 {
-  "checked": "2026-03-14T12:31:08Z",
+  "checked": "2026-03-14T14:16:56Z",
   "status": "missing",
   "missing": [
     {
-      "language": "TypeScript (153 files)",
+      "language": "TypeScript (159 files)",
       "type": "missing_binary",
       "binaryInstall": "npm install -g typescript-language-server typescript",
       "pluginInstall": "claude plugin install vtsls@claude-code-lsps",

@@ -7,7 +7,7 @@ import { StatusBadge } from '@/components/status-badge';
 import type { AdminPayoutListItem } from '@shopvui/shared';
 
 interface PayoutsResponse {
-  payouts: AdminPayoutListItem[];
+  data: AdminPayoutListItem[];
   total: number;
   page: number;
   pageSize: number;
@@ -90,7 +90,7 @@ export default function PayoutsPage() {
       ) : (
         <DataTable
           columns={columns}
-          data={data?.payouts ?? []}
+          data={data?.data ?? []}
           page={page}
           totalPages={data ? Math.ceil(data.total / data.pageSize) : 1}
           onPageChange={setPage}

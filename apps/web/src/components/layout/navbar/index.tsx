@@ -22,11 +22,6 @@ import { ThemeToggle } from '../../ThemeToggle';
 export function Navbar() {
   const t = useTranslations('nav');
 
-  const navLinks = [
-    { href: '/products', label: t('products') },
-    { href: '/orders', label: t('orders') },
-  ];
-
   const userMenuLinks = [
     { href: '/orders', label: t('myOrders'), icon: ShoppingBagIcon },
     { href: '/account/wishlist', label: t('wishlist'), icon: HeartIcon },
@@ -72,22 +67,6 @@ export function Navbar() {
             ShopVUI
           </Link>
 
-          <ul className="hidden gap-4 md:flex">
-            {navLinks.map(({ href, label }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className={clsx(
-                    'text-sm text-neutral-500 underline-offset-4',
-                    'hover:text-black hover:underline',
-                    'dark:text-neutral-400 dark:hover:text-neutral-300'
-                  )}
-                >
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
 
         {/* CENTER: Search */}

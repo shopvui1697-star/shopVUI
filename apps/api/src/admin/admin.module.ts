@@ -8,6 +8,7 @@ import { AdminAnalyticsModule } from './analytics/admin-analytics.module';
 import { AdminImportsModule } from './imports/admin-imports.module';
 import { AdminResellersModule } from './resellers/admin-resellers.module';
 import { AdminChannelsModule } from './channels/admin-channels.module';
+import { AdminCategoriesModule } from './categories/admin-categories.module';
 import { StorageModule } from './storage/storage.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { StorageModule } from './storage/storage.module';
     AdminImportsModule,
     AdminResellersModule,
     AdminChannelsModule,
+    AdminCategoriesModule,
   ],
 })
 export class AdminModule {}

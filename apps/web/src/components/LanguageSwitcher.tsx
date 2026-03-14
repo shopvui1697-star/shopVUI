@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
-import { locales, LOCALE_COOKIE, type Locale } from '../i18n/config';
+import { LOCALE_COOKIE, type Locale } from '../i18n/config';
 
 export function LanguageSwitcher({
   variant = 'dropdown-item',

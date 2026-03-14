@@ -9,7 +9,7 @@ import { ORDER_STATUS_LABELS, CHANNEL_LABELS } from '@/lib/constants';
 import type { AdminOrderListItem } from '@shopvui/shared';
 
 interface OrdersResponse {
-  orders: AdminOrderListItem[];
+  data: AdminOrderListItem[];
   total: number;
   page: number;
   pageSize: number;
@@ -150,7 +150,7 @@ export default function OrdersPage() {
       ) : (
         <DataTable
           columns={columns}
-          data={data?.orders ?? []}
+          data={data?.data ?? []}
           page={page}
           totalPages={data ? Math.ceil(data.total / data.pageSize) : 1}
           onPageChange={setPage}

@@ -1,8 +1,23 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // Admin user
+  const passwordHash = await bcrypt.hash('admin123', 10);
+  await prisma.user.upsert({
+    where: { email: 'admin@shopvui.com' },
+    update: { passwordHash, role: 'ADMIN' },
+    create: {
+      email: 'admin@shopvui.com',
+      name: 'Admin',
+      passwordHash,
+      role: 'ADMIN',
+    },
+  });
+  console.log('Admin user created: admin@shopvui.com / admin123');
+
   // Categories
   const electronics = await prisma.category.upsert({
     where: { slug: 'electronics' },

@@ -7,7 +7,7 @@ import { StatusBadge } from '@/components/status-badge';
 import type { AdminResellerListItem } from '@shopvui/shared';
 
 interface ResellersResponse {
-  resellers: AdminResellerListItem[];
+  data: AdminResellerListItem[];
   total: number;
   page: number;
   pageSize: number;
@@ -99,7 +99,7 @@ export default function ResellersPage() {
       ) : (
         <DataTable
           columns={columns}
-          data={data?.resellers ?? []}
+          data={data?.data ?? []}
           page={page}
           totalPages={data ? Math.ceil(data.total / data.pageSize) : 1}
           onPageChange={setPage}

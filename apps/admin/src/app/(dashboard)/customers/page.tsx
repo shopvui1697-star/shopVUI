@@ -7,7 +7,7 @@ import { DataTable, type Column } from '@/components/data-table';
 import type { AdminCustomerListItem } from '@shopvui/shared';
 
 interface CustomersResponse {
-  customers: AdminCustomerListItem[];
+  data: AdminCustomerListItem[];
   total: number;
   page: number;
   pageSize: number;
@@ -94,7 +94,7 @@ export default function CustomersPage() {
       ) : (
         <DataTable
           columns={columns}
-          data={data?.customers ?? []}
+          data={data?.data ?? []}
           page={page}
           totalPages={data ? Math.ceil(data.total / data.pageSize) : 1}
           onPageChange={setPage}

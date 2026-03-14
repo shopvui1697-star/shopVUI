@@ -7,6 +7,7 @@ import {
   Param,
   Query,
   Body,
+  HttpCode,
   UseGuards,
   UseInterceptors,
   UploadedFile,
@@ -14,8 +15,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminGuard } from '../guards/admin.guard';
 import { AdminProductsService } from './admin-products.service';
-import type { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
-import type { CreatePriceTierDto, UpdatePriceTierDto } from './dto/price-tier.dto';
+import { CreateProductDto, UpdateProductDto } from './dto/admin-product.dto';
+import { CreatePriceTierDto, UpdatePriceTierDto } from './dto/price-tier.dto';
 
 @Controller('admin/products')
 @UseGuards(AdminGuard)
@@ -69,6 +70,24 @@ export class AdminProductsController {
     return this.adminProductsService.uploadImage(id, file);
   }
 
+  @Patch(':id/images/:imageId')
+  async updateImage(
+    @Param('id') id: string,
+    @Param('imageId') imageId: string,
+    @Body() body: { alt?: string },
+  ) {
+    return this.adminProductsService.updateImage(id, imageId, body);
+  }
+
+  @Delete(':id/images/:imageId')
+  @HttpCode(204)
+  async deleteImage(
+    @Param('id') id: string,
+    @Param('imageId') imageId: string,
+  ) {
+    await this.adminProductsService.deleteImage(id, imageId);
+  }
+
   @Get(':productId/price-tiers')
   async getPriceTiers(@Param('productId') productId: string) {
     return this.adminProductsService.getPriceTiers(productId);
@@ -92,6 +111,7 @@ export class AdminProductsController {
   }
 
   @Delete(':productId/price-tiers/:tierId')
+  @HttpCode(204)
   async deletePriceTier(
     @Param('productId') productId: string,
     @Param('tierId') tierId: string,

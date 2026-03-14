@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { prisma } from '@shopvui/db';
-import type { ProposeResellerCouponDto, ApproveResellerCouponDto } from './dto/coupon.dto';
+import { ProposeResellerCouponDto, ApproveResellerCouponDto } from './dto/coupon.dto';
 
 @Injectable()
 export class ResellersService {

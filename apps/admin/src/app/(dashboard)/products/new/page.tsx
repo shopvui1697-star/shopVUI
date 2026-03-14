@@ -41,7 +41,7 @@ export default function NewProductPage() {
       if (image) {
         const fd = new FormData();
         fd.append('file', image);
-        await apiFetch(`/admin/products/${product.id}/image`, {
+        await apiFetch(`/admin/products/${product.id}/images`, {
           method: 'POST',
           body: fd,
         });

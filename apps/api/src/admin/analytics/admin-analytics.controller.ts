@@ -77,4 +77,12 @@ export class AdminAnalyticsController {
   ) {
     return this.adminAnalyticsService.resellerPerformance(dateFrom, dateTo);
   }
+
+  @Get('coupon-performance')
+  async couponPerformance(
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+  ) {
+    return this.adminAnalyticsService.couponPerformance(dateFrom, dateTo);
+  }
 }
