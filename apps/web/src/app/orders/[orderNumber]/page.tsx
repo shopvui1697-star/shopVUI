@@ -6,12 +6,14 @@ import clsx from 'clsx';
 import type { OrderDetail } from '@shopvui/shared';
 import { formatCurrency } from '@shopvui/shared';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useTranslations } from 'next-intl';
 import { OrderStatusBadge } from '../../../components/OrderStatusBadge';
 import * as api from '../../../lib/api';
 import { Footer } from '../../../components/layout/footer';
 
 export default function OrderDetailPage({ params }: { params: Promise<{ orderNumber: string }> }) {
   const { orderNumber } = use(params);
+  const t = useTranslations('orders');
   const [order, setOrder] = useState<OrderDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
@@ -30,7 +32,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
   }, [token, orderNumber]);
 
   const handleCancel = async () => {
-    if (!token || !confirm('Are you sure you want to cancel this order?')) return;
+    if (!token || !confirm(t('cancelConfirm'))) return;
     setCancelling(true);
     try {
       await api.cancelOrder(token, orderNumber);
@@ -56,7 +58,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
   if (!order) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <p className="text-neutral-500 dark:text-neutral-400">Order not found.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">{t('orderNotFound')}</p>
       </main>
     );
   }
@@ -69,23 +71,23 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
           className="mb-6 inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
         >
           <ArrowLeftIcon className="h-4 w-4" />
-          Back to Orders
+          {t('backToOrders')}
         </Link>
 
         {/* Header */}
         <div className="mt-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold text-black dark:text-white">
-            Order #{order.orderNumber}
+            {t('orderNumber', { number: order.orderNumber })}
           </h1>
           <OrderStatusBadge status={order.status} />
         </div>
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Placed on {new Date(order.date).toLocaleString()}
+          {t('placedOn', { date: new Date(order.date).toLocaleString() })}
         </p>
 
         {/* Order Items */}
         <section className="mt-8">
-          <h2 className="mb-4 text-lg font-semibold text-black dark:text-white">Items</h2>
+          <h2 className="mb-4 text-lg font-semibold text-black dark:text-white">{t('items')}</h2>
           <div className="divide-y divide-neutral-100 rounded-lg border border-neutral-200 dark:divide-neutral-800 dark:border-neutral-700">
             {order.items.map((item) => (
               <div key={item.id} className="flex items-center gap-4 p-4">
@@ -113,31 +115,31 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
         {/* Summary */}
         <section className="mt-6 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-800/50">
           <div className="mb-2 flex justify-between text-sm">
-            <span className="text-neutral-500 dark:text-neutral-400">Subtotal</span>
+            <span className="text-neutral-500 dark:text-neutral-400">{t('subtotal')}</span>
             <span className="text-black dark:text-white">{formatCurrency(order.subtotal, 'VND')}</span>
           </div>
           {order.discountAmount > 0 && (
             <div className="mb-2 flex justify-between text-sm text-green-600 dark:text-green-400">
-              <span>Discount {order.couponCode && `(${order.couponCode})`}</span>
+              <span>{order.couponCode ? t('discountWithCode', { code: order.couponCode }) : t('discount')}</span>
               <span>-{formatCurrency(order.discountAmount, 'VND')}</span>
             </div>
           )}
           <div className="mb-2 flex justify-between text-sm">
-            <span className="text-neutral-500 dark:text-neutral-400">Shipping</span>
+            <span className="text-neutral-500 dark:text-neutral-400">{t('shipping')}</span>
             <span className="text-black dark:text-white">
-              {order.shippingFee === 0 ? 'Free' : formatCurrency(order.shippingFee, 'VND')}
+              {order.shippingFee === 0 ? t('shippingFree') : formatCurrency(order.shippingFee, 'VND')}
             </span>
           </div>
           <hr className="my-2 border-neutral-200 dark:border-neutral-700" />
           <div className="flex justify-between text-lg font-bold">
-            <span className="text-black dark:text-white">Total</span>
+            <span className="text-black dark:text-white">{t('total')}</span>
             <span className="text-black dark:text-white">{formatCurrency(order.total, 'VND')}</span>
           </div>
         </section>
 
         {/* Shipping Address */}
         <section className="mt-6">
-          <h2 className="mb-2 text-lg font-semibold text-black dark:text-white">Shipping Address</h2>
+          <h2 className="mb-2 text-lg font-semibold text-black dark:text-white">{t('shippingAddress')}</h2>
           <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-700">
             <p className="font-medium text-black dark:text-white">{order.address.fullName}</p>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
@@ -149,13 +151,13 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
 
         {/* Payment Info */}
         <section className="mt-6">
-          <h2 className="mb-2 text-lg font-semibold text-black dark:text-white">Payment</h2>
+          <h2 className="mb-2 text-lg font-semibold text-black dark:text-white">{t('payment')}</h2>
           <div className="rounded-lg border border-neutral-200 p-4 dark:border-neutral-700">
             <p className="text-sm text-neutral-700 dark:text-neutral-300">
-              Method: <span className="font-semibold">{order.paymentMethod.replace('_', ' ')}</span>
+              {t('method')} <span className="font-semibold">{order.paymentMethod.replace('_', ' ')}</span>
             </p>
             <p className="text-sm text-neutral-700 dark:text-neutral-300">
-              Status: <span className="font-semibold">{order.paymentStatus}</span>
+              {t('status')} <span className="font-semibold">{order.paymentStatus}</span>
             </p>
           </div>
         </section>
@@ -163,7 +165,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
         {/* Status History */}
         {order.statusHistory.length > 0 && (
           <section className="mt-6">
-            <h2 className="mb-3 text-lg font-semibold text-black dark:text-white">Status History</h2>
+            <h2 className="mb-3 text-lg font-semibold text-black dark:text-white">{t('statusHistory')}</h2>
             <div className="space-y-2">
               {order.statusHistory.map((entry, i) => (
                 <div key={i} className="flex items-center gap-4 text-sm">
@@ -192,7 +194,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
                 : 'bg-red-600 hover:bg-red-700'
             )}
           >
-            {cancelling ? 'Cancelling...' : 'Cancel Order'}
+            {cancelling ? t('cancelling') : t('cancelOrder')}
           </button>
         )}
       </main>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import { formatCurrency } from '@shopvui/shared';
 import { XMarkIcon, HeartIcon } from '@heroicons/react/24/outline';
 import * as api from '../../../lib/api';
@@ -23,6 +24,7 @@ interface WishlistItem {
 
 export default function WishlistPage() {
   const { token } = useAuth();
+  const t = useTranslations('account.wishlist');
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
@@ -62,7 +64,7 @@ export default function WishlistPage() {
   if (!token && !loading) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <p className="text-neutral-500 dark:text-neutral-400">Please log in to view your wishlist.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">{t('loginRequired')}</p>
       </main>
     );
   }
@@ -80,17 +82,17 @@ export default function WishlistPage() {
   return (
     <>
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-black dark:text-white">My Wishlist</h1>
+        <h1 className="mb-6 text-2xl font-bold text-black dark:text-white">{t('title')}</h1>
 
         {items.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center" data-testid="empty-state">
             <HeartIcon className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
-            <p className="text-lg text-neutral-500 dark:text-neutral-400">Your wishlist is empty</p>
+            <p className="text-lg text-neutral-500 dark:text-neutral-400">{t('empty')}</p>
             <Link
               href="/products"
               className="mt-4 rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
             >
-              Browse Products
+              {t('browseProducts')}
             </Link>
           </div>
         ) : (
@@ -112,7 +114,7 @@ export default function WishlistPage() {
                     disabled={removingIds.has(item.productId)}
                     data-testid="remove-button"
                     className="absolute right-2 top-2 z-10 rounded-full bg-white/80 p-1.5 text-neutral-500 backdrop-blur transition-colors hover:bg-white hover:text-red-500 dark:bg-neutral-800/80 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-red-400"
-                    title="Remove from wishlist"
+                    title={t('removeFromWishlist')}
                   >
                     <XMarkIcon className="h-4 w-4" />
                   </button>
@@ -143,7 +145,7 @@ export default function WishlistPage() {
                         )}
                         data-testid="stock-badge"
                       >
-                        {inStock ? 'In Stock' : 'Out of Stock'}
+                        {inStock ? t('inStock') : t('outOfStock')}
                       </span>
                     </div>
                   </Link>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import * as api from '@/lib/api';
 
 interface Coupon {
@@ -15,6 +16,7 @@ interface Coupon {
 }
 
 export default function ResellerCouponsPage() {
+  const t = useTranslations('reseller.coupons');
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [newCode, setNewCode] = useState('');
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export default function ResellerCouponsPage() {
     setMessage('');
     try {
       await api.proposeResellerCoupon(token, newCode.trim());
-      setMessage('Coupon proposed! Waiting for admin approval.');
+      setMessage(t('proposedSuccess'));
       setNewCode('');
       loadCoupons();
     } catch (err: any) {
@@ -57,28 +59,28 @@ export default function ResellerCouponsPage() {
     });
   };
 
-  if (loading) return <div className="p-8 text-center">Loading coupons...</div>;
+  if (loading) return <div className="p-8 text-center">{t('loadingCoupons')}</div>;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">My Coupons</h1>
+      <h1 className="text-2xl font-bold mb-6">{t('title')}</h1>
 
       <form onSubmit={handlePropose} className="flex gap-2 mb-6">
         <input
           type="text"
-          placeholder="Propose a coupon code (e.g., MYNAME10)"
+          placeholder={t('proposePlaceholder')}
           value={newCode}
           onChange={(e) => setNewCode(e.target.value.toUpperCase())}
           className="border rounded px-3 py-2 flex-1"
         />
         <button type="submit" disabled={proposing} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">
-          {proposing ? 'Submitting...' : 'Propose'}
+          {proposing ? t('submitting') : t('propose')}
         </button>
       </form>
-      {message && <p className={`text-sm mb-4 ${message.includes('Waiting') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
+      {message && <p className={`text-sm mb-4 ${message === t('proposedSuccess') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
 
       {coupons.length === 0 ? (
-        <p className="text-gray-500">No coupons yet. Propose one above!</p>
+        <p className="text-gray-500">{t('noCoupons')}</p>
       ) : (
         <div className="space-y-3">
           {coupons.map((c) => (
@@ -86,11 +88,11 @@ export default function ResellerCouponsPage() {
               <div>
                 <span className="font-mono text-lg font-bold">{c.code}</span>
                 <span className={`ml-3 px-2 py-0.5 rounded text-xs ${c.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}`}>
-                  {c.isActive ? 'Active' : 'Pending Approval'}
+                  {c.isActive ? t('active') : t('pendingApproval')}
                 </span>
                 {c.isActive && c.value && (
                   <span className="ml-2 text-sm text-gray-500">
-                    {c.type === 'PERCENTAGE' ? `${c.value}% off` : `${c.value.toLocaleString()} VND off`}
+                    {c.type === 'PERCENTAGE' ? t('percentOff', { value: c.value }) : t('fixedOff', { value: c.value!.toLocaleString() })}
                   </span>
                 )}
               </div>
@@ -98,7 +100,7 @@ export default function ResellerCouponsPage() {
                 <div className="flex items-center gap-3">
                   {typeof c.usageCount === 'number' && (
                     <span className="text-sm text-gray-500" data-testid="usage-count">
-                      {c.usageCount} {c.usageCount === 1 ? 'use' : 'uses'}
+                      {c.usageCount === 1 ? t('use', { count: c.usageCount }) : t('uses', { count: c.usageCount })}
                     </span>
                   )}
                   <button
@@ -106,7 +108,7 @@ export default function ResellerCouponsPage() {
                     className="text-sm text-blue-600 hover:text-blue-800"
                     data-testid="copy-link-button"
                   >
-                    {copied === c.code ? 'Copied!' : 'Copy Link'}
+                    {copied === c.code ? t('copied') : t('copyLink')}
                   </button>
                 </div>
               )}

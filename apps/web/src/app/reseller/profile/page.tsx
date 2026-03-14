@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import * as api from '@/lib/api';
 
 export default function ResellerProfilePage() {
+  const t = useTranslations('reseller.profile');
   const [profile, setProfile] = useState<any>(null);
   const [phone, setPhone] = useState('');
   const [bankName, setBankName] = useState('');
@@ -38,7 +40,7 @@ export default function ResellerProfilePage() {
         phone,
         bankInfo: { bankName, accountNumber, accountHolder },
       });
-      setMessage('Profile updated successfully!');
+      setMessage(t('profileUpdated'));
     } catch (err: any) {
       setMessage(err.message);
     } finally {
@@ -46,40 +48,40 @@ export default function ResellerProfilePage() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center">Loading profile...</div>;
+  if (loading) return <div className="p-8 text-center">{t('loadingProfile')}</div>;
 
   return (
     <div className="max-w-lg">
-      <h1 className="text-2xl font-bold mb-6">Profile Settings</h1>
+      <h1 className="text-2xl font-bold mb-6">{t('title')}</h1>
       <form onSubmit={handleSave} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('name')}</label>
           <input type="text" value={profile?.name ?? ''} disabled className="w-full border rounded px-3 py-2 bg-gray-50" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('email')}</label>
           <input type="email" value={profile?.email ?? ''} disabled className="w-full border rounded px-3 py-2 bg-gray-50" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('phone')}</label>
           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full border rounded px-3 py-2" />
         </div>
-        <h3 className="text-lg font-semibold mt-6">Bank Information</h3>
+        <h3 className="text-lg font-semibold mt-6">{t('bankInformation')}</h3>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Bank Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('bankName')}</label>
           <input type="text" value={bankName} onChange={(e) => setBankName(e.target.value)} className="w-full border rounded px-3 py-2" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('accountNumber')}</label>
           <input type="text" value={accountNumber} onChange={(e) => setAccountNumber(e.target.value)} className="w-full border rounded px-3 py-2" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Account Holder</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('accountHolder')}</label>
           <input type="text" value={accountHolder} onChange={(e) => setAccountHolder(e.target.value)} className="w-full border rounded px-3 py-2" />
         </div>
-        {message && <p className={`text-sm ${message.includes('success') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
+        {message && <p className={`text-sm ${message === t('profileUpdated') ? 'text-green-600' : 'text-red-600'}`}>{message}</p>}
         <button type="submit" disabled={saving} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50">
-          {saving ? 'Saving...' : 'Save Changes'}
+          {saving ? t('saving') : t('saveChanges')}
         </button>
       </form>
     </div>

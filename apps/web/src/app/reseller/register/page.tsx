@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import clsx from 'clsx';
 import * as api from '@/lib/api';
 
@@ -15,6 +16,7 @@ interface FormState {
 const EMPTY: FormState = { name: '', email: '', password: '', phone: '', reason: '' };
 
 export default function ResellerRegisterPage() {
+  const t = useTranslations('reseller.register');
   const [form, setForm] = useState<FormState>(EMPTY);
   const [touched, setTouched] = useState<Partial<Record<keyof FormState, boolean>>>({});
   const [loading, setLoading] = useState(false);
@@ -29,12 +31,12 @@ export default function ResellerRegisterPage() {
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const errors: Partial<Record<keyof FormState, string>> = {
-    name: !form.name ? 'Full name is required' : undefined,
-    email: !form.email ? 'Email is required' : undefined,
+    name: !form.name ? t('fullNameRequired') : undefined,
+    email: !form.email ? t('emailRequired') : undefined,
     password: !form.password
-      ? 'Password is required'
+      ? t('passwordRequired')
       : form.password.length < 8
-        ? 'Password must be at least 8 characters'
+        ? t('passwordMinLength')
         : undefined,
   };
 
@@ -82,9 +84,9 @@ export default function ResellerRegisterPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-xl font-bold text-green-800 dark:text-green-300">Application Submitted!</h2>
+          <h2 className="text-xl font-bold text-green-800 dark:text-green-300">{t('applicationSubmitted')}</h2>
           <p className="mt-2 text-sm text-green-700 dark:text-green-400">
-            Your reseller application has been submitted. You will be notified when approved.
+            {t('applicationMessage')}
           </p>
         </div>
       </main>
@@ -94,19 +96,19 @@ export default function ResellerRegisterPage() {
   return (
     <main className="flex min-h-[calc(100vh-60px)] items-center justify-center px-4 py-8">
       <div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-8 dark:border-neutral-700 dark:bg-neutral-900">
-        <h1 className="text-2xl font-bold text-black dark:text-white">Reseller Registration</h1>
+        <h1 className="text-2xl font-bold text-black dark:text-white">{t('title')}</h1>
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Apply to become a reseller partner.
+          {t('subtitle')}
         </p>
         <p className="mt-3 text-xs text-neutral-500 dark:text-neutral-400">
-          Fields marked <span className="text-red-500">*</span> are required
+          {t('fieldsRequired').split('*')[0]}<span className="text-red-500">*</span>{t('fieldsRequired').split('*')[1]}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-5 space-y-4" noValidate>
           {/* Full Name */}
           <div>
             <label className="mb-1 flex items-center gap-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              Full Name
+              {t('fullName')}
               <span className="text-red-500" aria-hidden="true">*</span>
             </label>
             <input
@@ -114,7 +116,7 @@ export default function ResellerRegisterPage() {
               value={form.name}
               onChange={set('name')}
               onBlur={touch('name')}
-              placeholder="Your full name"
+              placeholder={t('fullNamePlaceholder')}
               aria-required="true"
               className={inputClass('name')}
             />
@@ -126,7 +128,7 @@ export default function ResellerRegisterPage() {
           {/* Email */}
           <div>
             <label className="mb-1 flex items-center gap-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              Email
+              {t('email')}
               <span className="text-red-500" aria-hidden="true">*</span>
             </label>
             <input
@@ -134,7 +136,7 @@ export default function ResellerRegisterPage() {
               value={form.email}
               onChange={set('email')}
               onBlur={touch('email')}
-              placeholder="you@example.com"
+              placeholder={t('emailPlaceholder')}
               aria-required="true"
               className={inputClass('email')}
             />
@@ -146,16 +148,16 @@ export default function ResellerRegisterPage() {
           {/* Password */}
           <div>
             <label className="mb-1 flex items-center gap-1 text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              Password
+              {t('password')}
               <span className="text-red-500" aria-hidden="true">*</span>
-              <span className="ml-1 text-xs font-normal text-neutral-400">(min 8 characters)</span>
+              <span className="ml-1 text-xs font-normal text-neutral-400">{t('passwordHint')}</span>
             </label>
             <input
               type="password"
               value={form.password}
               onChange={set('password')}
               onBlur={touch('password')}
-              placeholder="At least 8 characters"
+              placeholder={t('passwordPlaceholder')}
               minLength={8}
               aria-required="true"
               className={inputClass('password')}
@@ -168,14 +170,14 @@ export default function ResellerRegisterPage() {
           {/* Phone — optional */}
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              Phone
-              <span className="ml-1 text-xs font-normal text-neutral-400">(optional)</span>
+              {t('phone')}
+              <span className="ml-1 text-xs font-normal text-neutral-400">{t('phoneOptional')}</span>
             </label>
             <input
               type="tel"
               value={form.phone}
               onChange={set('phone')}
-              placeholder="Your phone number"
+              placeholder={t('phonePlaceholder')}
               className={inputClass('phone', false)}
             />
           </div>
@@ -183,13 +185,13 @@ export default function ResellerRegisterPage() {
           {/* Reason — optional */}
           <div>
             <label className="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-              Why do you want to become a reseller?
-              <span className="ml-1 text-xs font-normal text-neutral-400">(optional)</span>
+              {t('reason')}
+              <span className="ml-1 text-xs font-normal text-neutral-400">{t('reasonOptional')}</span>
             </label>
             <textarea
               value={form.reason}
               onChange={set('reason')}
-              placeholder="Tell us about yourself and your plans..."
+              placeholder={t('reasonPlaceholder')}
               rows={3}
               className={clsx(
                 'w-full rounded-lg border px-3 py-2.5 text-sm transition-colors',
@@ -219,7 +221,7 @@ export default function ResellerRegisterPage() {
                 : 'bg-blue-600 hover:bg-blue-700',
             )}
           >
-            {loading ? 'Submitting...' : 'Submit Application'}
+            {loading ? t('submitting') : t('submitApplication')}
           </button>
         </form>
       </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import type { AddressData } from '@shopvui/shared';
 import { PlusIcon, PencilIcon, TrashIcon, StarIcon } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolidIcon } from '@heroicons/react/24/solid';
@@ -19,17 +20,18 @@ const EMPTY_FORM = {
   isDefault: false,
 };
 
-const FIELD_LABELS: Record<string, string> = {
-  fullName: 'Full Name',
-  phone: 'Phone',
-  street: 'Street',
-  ward: 'Ward',
-  district: 'District',
-  province: 'Province / City',
-};
-
 export default function AddressesPage() {
   const { token } = useAuth();
+  const t = useTranslations('account.addresses');
+
+  const FIELD_LABELS: Record<string, string> = {
+    fullName: t('fullName'),
+    phone: t('phone'),
+    street: t('street'),
+    ward: t('ward'),
+    district: t('district'),
+    province: t('provinceCity'),
+  };
   const [addresses, setAddresses] = useState<AddressData[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -84,7 +86,7 @@ export default function AddressesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!token || !confirm('Delete this address?')) return;
+    if (!token || !confirm(t('deleteConfirm'))) return;
     await api.deleteAddress(token, id);
     loadAddresses();
   };
@@ -98,7 +100,7 @@ export default function AddressesPage() {
   if (!token) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <p className="text-neutral-500 dark:text-neutral-400">Please log in to manage addresses.</p>
+        <p className="text-neutral-500 dark:text-neutral-400">{t('loginRequired')}</p>
       </main>
     );
   }
@@ -107,7 +109,7 @@ export default function AddressesPage() {
     <>
       <main className="mx-auto max-w-3xl px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-black dark:text-white">My Addresses</h1>
+          <h1 className="text-2xl font-bold text-black dark:text-white">{t('title')}</h1>
           <button
             onClick={() => {
               setForm(EMPTY_FORM);
@@ -117,7 +119,7 @@ export default function AddressesPage() {
             className="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
           >
             <PlusIcon className="h-4 w-4" />
-            Add Address
+            {t('addAddress')}
           </button>
         </div>
 
@@ -129,10 +131,10 @@ export default function AddressesPage() {
             noValidate
           >
             <h2 className="mb-1 text-lg font-semibold text-black dark:text-white">
-              {editingId ? 'Edit Address' : 'New Address'}
+              {editingId ? t('editAddress') : t('newAddress')}
             </h2>
             <p className="mb-4 text-xs text-neutral-500 dark:text-neutral-400">
-              Fields marked <span className="text-red-500">*</span> are required
+              {t('fieldsRequired').split('*')[0]}<span className="text-red-500">*</span>{t('fieldsRequired').split('*')[1]}
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {(['fullName', 'phone', 'street', 'ward', 'district', 'province'] as const).map(
@@ -164,7 +166,7 @@ export default function AddressesPage() {
                         )}
                       />
                       {hasError && (
-                        <p className="mt-1 text-xs text-red-500">{FIELD_LABELS[field]} is required</p>
+                        <p className="mt-1 text-xs text-red-500">{t('fieldRequired', { field: FIELD_LABELS[field] })}</p>
                       )}
                     </div>
                   );
@@ -178,14 +180,14 @@ export default function AddressesPage() {
                 onChange={(e) => setForm({ ...form, isDefault: e.target.checked })}
                 className="rounded accent-blue-600"
               />
-              Set as default address
+              {t('setAsDefault')}
             </label>
             <div className="mt-4 flex gap-3">
               <button
                 type="submit"
                 className="rounded-full bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
               >
-                {editingId ? 'Update' : 'Save'}
+                {editingId ? t('update') : t('save')}
               </button>
               <button
                 type="button"
@@ -196,7 +198,7 @@ export default function AddressesPage() {
                 }}
                 className="rounded-full border border-neutral-300 px-5 py-2 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-800"
               >
-                Cancel
+                {t('cancel')}
               </button>
             </div>
           </form>
@@ -209,7 +211,7 @@ export default function AddressesPage() {
           </div>
         ) : addresses.length === 0 ? (
           <p className="py-12 text-center text-neutral-500 dark:text-neutral-400">
-            No saved addresses yet.
+            {t('noAddresses')}
           </p>
         ) : (
           <div className="flex flex-col gap-3">
@@ -231,7 +233,7 @@ export default function AddressesPage() {
                       {addr.isDefault && (
                         <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
                           <StarSolidIcon className="h-3 w-3" />
-                          Default
+                          {t('default')}
                         </span>
                       )}
                     </p>
@@ -244,7 +246,7 @@ export default function AddressesPage() {
                     <button
                       onClick={() => handleEdit(addr)}
                       className="rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-blue-600 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-blue-400"
-                      title="Edit"
+                      title={t('edit')}
                     >
                       <PencilIcon className="h-4 w-4" />
                     </button>
@@ -252,7 +254,7 @@ export default function AddressesPage() {
                       <button
                         onClick={() => handleSetDefault(addr.id)}
                         className="rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-green-600 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-green-400"
-                        title="Set as default"
+                        title={t('setDefault')}
                       >
                         <StarIcon className="h-4 w-4" />
                       </button>
@@ -260,7 +262,7 @@ export default function AddressesPage() {
                     <button
                       onClick={() => handleDelete(addr.id)}
                       className="rounded-lg p-2 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-red-600 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-red-400"
-                      title="Delete"
+                      title={t('delete')}
                     >
                       <TrashIcon className="h-4 w-4" />
                     </button>

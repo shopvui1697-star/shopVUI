@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { formatCurrency } from '@shopvui/shared';
 import type { AddressData, PaymentMethod } from '@shopvui/shared';
 import { TagIcon, PlusIcon, XMarkIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import { useTranslations } from 'next-intl';
 import * as api from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { usePendingCoupon } from '../../hooks/use-coupon-from-url';
@@ -40,11 +41,13 @@ function AddressForm({
   onCancel,
   saving,
   showCancel,
+  t,
 }: {
   onSave: (data: AddressFormData) => Promise<void>;
   onCancel?: () => void;
   saving: boolean;
   showCancel: boolean;
+  t: (key: string, values?: Record<string, string>) => string;
 }) {
   const [form, setForm] = useState<AddressFormData>(EMPTY_FORM);
   const [touched, setTouched] = useState<Partial<Record<keyof AddressFormData, boolean>>>({});
@@ -64,16 +67,16 @@ function AddressForm({
   return (
     <div className="rounded-lg border-2 border-blue-200 bg-blue-50/30 p-4 dark:border-blue-800 dark:bg-blue-950/10">
       <p className="mb-3 text-xs text-neutral-500 dark:text-neutral-400">
-        Fields marked <span className="text-red-500">*</span> are required
+        {t('fieldsRequired')}
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {([
-          { field: 'fullName', label: 'Full Name', colSpan: false },
-          { field: 'phone', label: 'Phone Number', colSpan: false },
-          { field: 'street', label: 'Street Address', colSpan: true },
-          { field: 'ward', label: 'Ward', colSpan: false },
-          { field: 'district', label: 'District', colSpan: false },
-          { field: 'province', label: 'Province / City', colSpan: false },
+          { field: 'fullName', label: t('fullName'), colSpan: false },
+          { field: 'phone', label: t('phoneNumber'), colSpan: false },
+          { field: 'street', label: t('streetAddress'), colSpan: true },
+          { field: 'ward', label: t('ward'), colSpan: false },
+          { field: 'district', label: t('district'), colSpan: false },
+          { field: 'province', label: t('provinceCity'), colSpan: false },
         ] as { field: keyof AddressFormData; label: string; colSpan: boolean }[]).map(({ field, label, colSpan }) => (
           <div key={field} className={colSpan ? 'sm:col-span-2' : ''}>
             <label className="mb-1 flex items-center gap-1 text-xs font-medium text-neutral-600 dark:text-neutral-400">
@@ -100,7 +103,7 @@ function AddressForm({
               )}
             />
             {fieldError(field) && (
-              <p className="mt-1 text-xs text-red-500">{label} is required</p>
+              <p className="mt-1 text-xs text-red-500">{t('fieldRequired', { field: label })}</p>
             )}
           </div>
         ))}
@@ -113,7 +116,7 @@ function AddressForm({
           onChange={set('isDefault')}
           className="accent-blue-600"
         />
-        Save as default address
+        {t('saveAsDefault')}
       </label>
 
       <div className="mt-4 flex gap-2">
@@ -130,14 +133,14 @@ function AddressForm({
               : 'cursor-not-allowed bg-neutral-400 dark:bg-neutral-600',
           )}
         >
-          {saving ? 'Saving...' : 'Use this address'}
+          {saving ? t('saving') : t('useThisAddress')}
         </button>
         {showCancel && onCancel && (
           <button
             onClick={onCancel}
             className="rounded-lg px-4 py-2 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 dark:text-neutral-400 dark:hover:bg-neutral-800"
           >
-            Cancel
+            {t('cancel')}
           </button>
         )}
       </div>
@@ -145,14 +148,15 @@ function AddressForm({
   );
 }
 
-const PAYMENT_METHODS: { value: PaymentMethod; label: string; description: string }[] = [
-  { value: 'COD', label: 'Cash on Delivery', description: 'Pay when you receive your order' },
-  { value: 'BANK_TRANSFER', label: 'Bank Transfer', description: 'Transfer to our bank account' },
-  { value: 'VNPAY', label: 'VNPay', description: 'Pay via VNPay gateway' },
-  { value: 'MOMO', label: 'Momo', description: 'Pay via Momo e-wallet' },
-];
-
 export default function CheckoutPage() {
+  const tCheckout = useTranslations('checkout');
+
+  const PAYMENT_METHODS: { value: PaymentMethod; label: string; description: string }[] = [
+    { value: 'COD', label: tCheckout('cod'), description: tCheckout('codDescription') },
+    { value: 'BANK_TRANSFER', label: tCheckout('bankTransfer'), description: tCheckout('bankTransferDescription') },
+    { value: 'VNPAY', label: tCheckout('vnpay'), description: tCheckout('vnpayDescription') },
+    { value: 'MOMO', label: tCheckout('momo'), description: tCheckout('momoDescription') },
+  ];
   const router = useRouter();
   const { token, isLoading: authLoading } = useAuth();
   const [addresses, setAddresses] = useState<AddressData[]>([]);
@@ -183,7 +187,7 @@ export default function CheckoutPage() {
         setCouponError(prev.couponMessage);
       }
     } catch {
-      setCouponError('Invalid or expired coupon code');
+      setCouponError(tCheckout('invalidCoupon'));
     }
   };
 
@@ -242,7 +246,7 @@ export default function CheckoutPage() {
       setSelectedAddressId(newAddr.id);
       setShowAddressForm(false);
     } catch {
-      setAddressError('Failed to save address. Please try again.');
+      setAddressError(tCheckout('failedToSaveAddress'));
     } finally {
       setSavingAddress(false);
     }
@@ -268,7 +272,7 @@ export default function CheckoutPage() {
         router.push(`/orders/${result.orderNumber}`);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to place order');
+      setError(err.message || tCheckout('failedToPlaceOrder'));
     } finally {
       setPlacing(false);
     }
@@ -287,9 +291,9 @@ export default function CheckoutPage() {
   if (!token) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-black dark:text-white">Checkout</h1>
+        <h1 className="text-2xl font-bold text-black dark:text-white">{tCheckout('title')}</h1>
         <p className="mt-4 text-neutral-500 dark:text-neutral-400">
-          Please log in to proceed with checkout.
+          {tCheckout('loginRequired')}
         </p>
       </main>
     );
@@ -298,7 +302,7 @@ export default function CheckoutPage() {
   return (
     <>
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-black dark:text-white">Checkout</h1>
+        <h1 className="mb-6 text-2xl font-bold text-black dark:text-white">{tCheckout('title')}</h1>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
           {/* Left column */}
@@ -307,7 +311,7 @@ export default function CheckoutPage() {
             <section>
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-black dark:text-white">
-                  Shipping Address
+                  {tCheckout('shippingAddress')}
                 </h2>
                 {addresses.length > 0 && !showAddressForm && (
                   <button
@@ -315,7 +319,7 @@ export default function CheckoutPage() {
                     className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950/30"
                   >
                     <PlusIcon className="h-4 w-4" />
-                    Add new
+                    {tCheckout('addNew')}
                   </button>
                 )}
               </div>
@@ -348,7 +352,7 @@ export default function CheckoutPage() {
                         {addr.isDefault && (
                           <span className="flex items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
                             <CheckCircleIcon className="h-3 w-3" />
-                            Default
+                            {tCheckout('default')}
                           </span>
                         )}
                       </div>
@@ -366,7 +370,7 @@ export default function CheckoutPage() {
                     {addresses.length > 0 && (
                       <div className="mb-3 flex items-center justify-between">
                         <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                          New address
+                          {tCheckout('newAddress')}
                         </p>
                         <button
                           onClick={() => setShowAddressForm(false)}
@@ -381,6 +385,7 @@ export default function CheckoutPage() {
                       onCancel={addresses.length > 0 ? () => setShowAddressForm(false) : undefined}
                       saving={savingAddress}
                       showCancel={addresses.length > 0}
+                      t={tCheckout}
                     />
                     {addressError && (
                       <p className="mt-2 text-sm text-red-500">{addressError}</p>
@@ -393,7 +398,7 @@ export default function CheckoutPage() {
             {/* Payment Method */}
             <section>
               <h2 className="mb-4 text-lg font-semibold text-black dark:text-white">
-                Payment Method
+                {tCheckout('paymentMethod')}
               </h2>
               <div className="flex flex-col gap-3">
                 {PAYMENT_METHODS.map((pm) => (
@@ -425,7 +430,7 @@ export default function CheckoutPage() {
 
           {/* Order Summary Sidebar */}
           <div className="h-fit rounded-lg border border-neutral-200 bg-neutral-50 p-6 dark:border-neutral-700 dark:bg-neutral-800/50">
-            <h2 className="text-lg font-semibold text-black dark:text-white">Order Summary</h2>
+            <h2 className="text-lg font-semibold text-black dark:text-white">{tCheckout('orderSummary')}</h2>
 
             {preview && (
               <div className="mt-4">
@@ -446,24 +451,24 @@ export default function CheckoutPage() {
                 <hr className="my-3 border-neutral-200 dark:border-neutral-700" />
 
                 <div className="mb-2 flex justify-between text-sm">
-                  <span className="text-neutral-500 dark:text-neutral-400">Subtotal</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{tCheckout('subtotal')}</span>
                   <span className="text-black dark:text-white">{formatCurrency(preview.subtotal, 'VND')}</span>
                 </div>
                 {preview.couponDiscount > 0 && (
                   <div className="mb-2 flex justify-between text-sm text-green-600 dark:text-green-400">
-                    <span>Discount</span>
+                    <span>{tCheckout('discount')}</span>
                     <span>-{formatCurrency(preview.couponDiscount, 'VND')}</span>
                   </div>
                 )}
                 <div className="mb-2 flex justify-between text-sm">
-                  <span className="text-neutral-500 dark:text-neutral-400">Shipping</span>
+                  <span className="text-neutral-500 dark:text-neutral-400">{tCheckout('shipping')}</span>
                   <span className="text-black dark:text-white">
-                    {preview.shippingFee === 0 ? 'Free' : formatCurrency(preview.shippingFee, 'VND')}
+                    {preview.shippingFee === 0 ? tCheckout('shippingFree') : formatCurrency(preview.shippingFee, 'VND')}
                   </span>
                 </div>
                 <hr className="my-3 border-neutral-200 dark:border-neutral-700" />
                 <div className="flex justify-between text-lg font-bold">
-                  <span className="text-black dark:text-white">Total</span>
+                  <span className="text-black dark:text-white">{tCheckout('total')}</span>
                   <span className="text-black dark:text-white">{formatCurrency(preview.total, 'VND')}</span>
                 </div>
               </div>
@@ -478,7 +483,7 @@ export default function CheckoutPage() {
                     type="text"
                     value={couponCode}
                     onChange={(e) => { setCouponCode(e.target.value); setCouponError(''); }}
-                    placeholder="Coupon code"
+                    placeholder={tCheckout('couponPlaceholder')}
                     className="w-full rounded-lg border border-neutral-300 bg-white py-2 pl-9 pr-3 text-sm text-black placeholder-neutral-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-900 dark:text-white dark:placeholder-neutral-500"
                     data-testid="coupon-input"
                   />
@@ -487,7 +492,7 @@ export default function CheckoutPage() {
                   onClick={() => applyCoupon(couponCode)}
                   className="rounded-lg bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700 dark:bg-neutral-600 dark:hover:bg-neutral-500"
                 >
-                  Apply
+                  {tCheckout('apply')}
                 </button>
               </div>
               {couponError && (
@@ -503,14 +508,14 @@ export default function CheckoutPage() {
 
             {!selectedAddressId && !loading && (
               <p className="mt-3 text-xs text-amber-600 dark:text-amber-400">
-                Please add or select a shipping address to continue.
+                {tCheckout('selectAddress')}
               </p>
             )}
 
             <button
               onClick={handlePlaceOrder}
               disabled={placing || !selectedAddressId}
-              title={!selectedAddressId ? 'Select a shipping address first' : undefined}
+              title={!selectedAddressId ? tCheckout('selectAddressFirst') : undefined}
               className={clsx(
                 'mt-4 w-full rounded-full py-3 text-sm font-semibold text-white transition-colors',
                 placing || !selectedAddressId
@@ -518,7 +523,7 @@ export default function CheckoutPage() {
                   : 'bg-blue-600 hover:bg-blue-700'
               )}
             >
-              {placing ? 'Placing Order...' : 'Place Order'}
+              {placing ? tCheckout('placingOrder') : tCheckout('placeOrder')}
             </button>
           </div>
         </div>

@@ -24,6 +24,10 @@ Or sync a specific increment:
 /sw:sync-docs 0001
 ```
 
+## Active Features
+
+- [FS-014: Multi-Language Support (Vietnamese & English)](FS-014/FEATURE.md)
+
 ---
 
 Last updated: 2026-03-10

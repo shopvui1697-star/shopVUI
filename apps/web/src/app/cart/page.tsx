@@ -12,12 +12,14 @@ import {
   MinusIcon,
 } from '@heroicons/react/24/outline';
 import { formatCurrency } from '@shopvui/shared';
+import { useTranslations } from 'next-intl';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import * as api from '../../lib/api';
 import { Footer } from '../../components/layout/footer';
 
 export default function CartPage() {
+  const t = useTranslations('cart');
   const { cart, isLoading, updateItem, removeItem } = useCart();
   const { user } = useAuth();
   const searchParams = useSearchParams();
@@ -47,10 +49,10 @@ export default function CartPage() {
           <div className="flex flex-col items-center justify-center py-20">
             <ShoppingCartIcon className="h-16 w-16 text-neutral-300 dark:text-neutral-600" />
             <h1 className="mt-6 text-2xl font-bold text-black dark:text-white">
-              Your cart is empty
+              {t('emptyTitle')}
             </h1>
             <p className="mt-2 text-neutral-500 dark:text-neutral-400">
-              Looks like you haven&apos;t added anything yet.
+              {t('emptyDescription')}
             </p>
             <Link
               href="/products"
@@ -60,7 +62,7 @@ export default function CartPage() {
                 'hover:bg-blue-700 transition-colors'
               )}
             >
-              Continue Shopping
+              {t('continueShopping')}
             </Link>
           </div>
         </main>
@@ -72,7 +74,7 @@ export default function CartPage() {
   return (
     <>
       <main className="mx-auto max-w-screen-2xl px-4 py-12 lg:px-6">
-        <h1 className="text-2xl font-bold text-black dark:text-white">Shopping Cart</h1>
+        <h1 className="text-2xl font-bold text-black dark:text-white">{t('title')}</h1>
 
         <div className="mt-8 lg:grid lg:grid-cols-3 lg:gap-12">
           {/* Cart Items - Left Column */}
@@ -111,10 +113,10 @@ export default function CartPage() {
                           {item.productName}
                         </h3>
                         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                          {formatCurrency(item.unitPrice, 'VND')} / unit
+                          {formatCurrency(item.unitPrice, 'VND')} {t('unit')}
                           {item.tierApplied && (
                             <span className="ml-2 text-emerald-600 dark:text-emerald-400">
-                              (Tier: {item.tierApplied})
+                              ({t('tier', { tier: item.tierApplied })})
                             </span>
                           )}
                         </p>
@@ -140,7 +142,7 @@ export default function CartPage() {
                               updateItem(item.id, item.quantity - 1);
                             }
                           }}
-                          aria-label="Decrease quantity"
+                          aria-label={t('decreaseQuantity')}
                           className={clsx(
                             'flex h-9 w-9 items-center justify-center rounded-full transition-colors',
                             'hover:bg-neutral-100 dark:hover:bg-neutral-800'
@@ -153,7 +155,7 @@ export default function CartPage() {
                         </span>
                         <button
                           onClick={() => updateItem(item.id, item.quantity + 1)}
-                          aria-label="Increase quantity"
+                          aria-label={t('increaseQuantity')}
                           className={clsx(
                             'flex h-9 w-9 items-center justify-center rounded-full transition-colors',
                             'hover:bg-neutral-100 dark:hover:bg-neutral-800'
@@ -166,7 +168,7 @@ export default function CartPage() {
                       {/* Remove button */}
                       <button
                         onClick={() => removeItem(item.id)}
-                        aria-label={`Remove ${item.productName}`}
+                        aria-label={t('remove')}
                         className={clsx(
                           'flex items-center gap-1 text-sm text-neutral-500 transition-colors',
                           'hover:text-red-600',
@@ -174,7 +176,7 @@ export default function CartPage() {
                         )}
                       >
                         <XMarkIcon className="h-4 w-4" />
-                        Remove
+                        {t('remove')}
                       </button>
                     </div>
                   </div>
@@ -193,12 +195,12 @@ export default function CartPage() {
               )}
             >
               <h2 className="text-lg font-semibold text-black dark:text-white">
-                Order Summary
+                {t('orderSummary')}
               </h2>
 
               <dl className="mt-6 space-y-3">
                 <div className="flex items-center justify-between">
-                  <dt className="text-sm text-neutral-500 dark:text-neutral-400">Subtotal</dt>
+                  <dt className="text-sm text-neutral-500 dark:text-neutral-400">{t('subtotal')}</dt>
                   <dd className="text-sm font-medium text-black dark:text-white">
                     {formatCurrency(cart.subtotal, 'VND')}
                   </dd>
@@ -206,7 +208,7 @@ export default function CartPage() {
 
                 {cart.couponDiscount > 0 && (
                   <div className="flex items-center justify-between">
-                    <dt className="text-sm text-emerald-600 dark:text-emerald-400">Coupon Discount</dt>
+                    <dt className="text-sm text-emerald-600 dark:text-emerald-400">{t('couponDiscount')}</dt>
                     <dd className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
                       -{formatCurrency(cart.couponDiscount, 'VND')}
                     </dd>
@@ -214,21 +216,21 @@ export default function CartPage() {
                 )}
 
                 <div className="flex items-center justify-between">
-                  <dt className="text-sm text-neutral-500 dark:text-neutral-400">Shipping</dt>
+                  <dt className="text-sm text-neutral-500 dark:text-neutral-400">{t('shipping')}</dt>
                   <dd className="text-sm font-medium text-black dark:text-white">
-                    {cart.shippingFee === 0 ? 'Free' : formatCurrency(cart.shippingFee, 'VND')}
+                    {cart.shippingFee === 0 ? t('shippingFree') : formatCurrency(cart.shippingFee, 'VND')}
                   </dd>
                 </div>
 
                 {cart.shippingFee === 0 && (
                   <p className="text-xs text-neutral-400 dark:text-neutral-500">
-                    Shipping calculated at checkout
+                    {t('shippingCalculated')}
                   </p>
                 )}
 
                 <div className="border-t border-neutral-200 pt-3 dark:border-neutral-700">
                   <div className="flex items-center justify-between">
-                    <dt className="text-base font-bold text-black dark:text-white">Total</dt>
+                    <dt className="text-base font-bold text-black dark:text-white">{t('total')}</dt>
                     <dd className="text-base font-bold text-black dark:text-white">
                       {formatCurrency(cart.total, 'VND')}
                     </dd>
@@ -243,7 +245,7 @@ export default function CartPage() {
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    placeholder="Coupon code"
+                    placeholder={t('couponPlaceholder')}
                     data-testid="coupon-input"
                     className={clsx(
                       'flex-1 rounded-lg border px-3 py-2 text-sm',
@@ -258,7 +260,7 @@ export default function CartPage() {
                       if (!couponCode.trim()) return;
                       const token = localStorage.getItem('token');
                       if (!token || !cart) {
-                        setCouponMessage('Please log in to apply coupons');
+                        setCouponMessage(t('loginToApplyCoupons'));
                         return;
                       }
                       try {
@@ -270,7 +272,7 @@ export default function CartPage() {
                         );
                         setCouponMessage(result.message);
                       } catch {
-                        setCouponMessage('Failed to validate coupon');
+                        setCouponMessage(t('failedToValidateCoupon'));
                       }
                     }}
                     className={clsx(
@@ -279,7 +281,7 @@ export default function CartPage() {
                       'dark:bg-neutral-600 dark:hover:bg-neutral-500'
                     )}
                   >
-                    Apply
+                    {t('apply')}
                   </button>
                 </div>
                 {couponMessage && (
@@ -300,7 +302,7 @@ export default function CartPage() {
                     'dark:bg-white dark:text-black dark:hover:bg-neutral-200'
                   )}
                 >
-                  Sign in to checkout
+                  {t('signInToCheckout')}
                 </Link>
               ) : (
                 <Link
@@ -311,7 +313,7 @@ export default function CartPage() {
                     'hover:bg-blue-700'
                   )}
                 >
-                  Proceed to Checkout
+                  {t('proceedToCheckout')}
                 </Link>
               )}
             </div>

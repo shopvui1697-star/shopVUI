@@ -1,0 +1,47 @@
+{
+  "version": "1.0",
+  "incrementId": "0014-multi-language",
+  "timestamp": "2026-03-14T12:25:00.000Z",
+  "verdict": "PASS",
+  "shipReadiness": "READY",
+  "summary": {
+    "totalFindings": 1,
+    "critical": 0,
+    "high": 0,
+    "medium": 1
+  },
+  "findings": [
+    {
+      "id": "F-003",
+      "severity": "medium",
+      "confidence": 70,
+      "category": "security",
+      "title": "Locale cookie missing Secure flag in production",
+      "description": "LanguageSwitcher.tsx sets the NEXT_LOCALE cookie without the 'Secure' flag. Low risk since this is a preference cookie, not a session token.",
+      "file": "apps/web/src/components/LanguageSwitcher.tsx",
+      "lines": "22",
+      "fix": "Add ';secure' conditionally in production.",
+      "relatedACs": ["AC-US2-03"]
+    }
+  ],
+  "resolved": [
+    {
+      "id": "F-001",
+      "title": "Fixed: renamed 'switchLanguage' to 'switchTo' in both en.json and vi.json to match component code"
+    },
+    {
+      "id": "F-002",
+      "title": "Fixed: replaced hardcoded aria-label with t('remove') in cart/page.tsx"
+    }
+  ],
+  "positives": [
+    "Translation file structure is well-organized with namespaced keys",
+    "Both en.json and vi.json have matching key structures (293 keys each)",
+    "Invalid locale cookie values handled gracefully with fallback to 'vi'",
+    "next-intl middleware correctly configured with localePrefix: 'never'",
+    "Root layout properly uses async getLocale/getMessages and sets html lang dynamically",
+    "Server components use getTranslations, client components use useTranslations",
+    "Message bundle sizes reasonable (~12-14KB each)",
+    "localStorage mirror of cookie provides fast client-side fallback"
+  ]
+}

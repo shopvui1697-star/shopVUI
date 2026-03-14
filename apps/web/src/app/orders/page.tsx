@@ -6,11 +6,13 @@ import clsx from 'clsx';
 import type { OrderSummary } from '@shopvui/shared';
 import { formatCurrency } from '@shopvui/shared';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { useTranslations } from 'next-intl';
 import { OrderStatusBadge } from '../../components/OrderStatusBadge';
 import * as api from '../../lib/api';
 import { Footer } from '../../components/layout/footer';
 
 export default function OrdersPage() {
+  const t = useTranslations('orders');
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -35,8 +37,8 @@ export default function OrdersPage() {
   if (!token) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="text-2xl font-bold text-black dark:text-white">My Orders</h1>
-        <p className="mt-4 text-neutral-500 dark:text-neutral-400">Please log in to view your orders.</p>
+        <h1 className="text-2xl font-bold text-black dark:text-white">{t('title')}</h1>
+        <p className="mt-4 text-neutral-500 dark:text-neutral-400">{t('loginRequired')}</p>
       </main>
     );
   }
@@ -54,10 +56,10 @@ export default function OrdersPage() {
   return (
     <>
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="mb-6 text-2xl font-bold text-black dark:text-white">My Orders</h1>
+        <h1 className="mb-6 text-2xl font-bold text-black dark:text-white">{t('title')}</h1>
 
         {orders.length === 0 ? (
-          <p className="py-12 text-center text-neutral-500 dark:text-neutral-400">No orders yet.</p>
+          <p className="py-12 text-center text-neutral-500 dark:text-neutral-400">{t('noOrders')}</p>
         ) : (
           <div className="flex flex-col gap-3">
             {orders.map((order) => (
@@ -70,10 +72,10 @@ export default function OrdersPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-black group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
-                      Order #{order.orderNumber}
+                      {t('orderNumber', { number: order.orderNumber })}
                     </p>
                     <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                      {new Date(order.date).toLocaleDateString()} | {order.itemCount} item(s)
+                      {new Date(order.date).toLocaleDateString()} | {t('itemCount', { count: order.itemCount })}
                     </p>
                   </div>
                   <div className="text-right">
@@ -102,10 +104,10 @@ export default function OrdersPage() {
               )}
             >
               <ChevronLeftIcon className="h-4 w-4" />
-              Previous
+              {t('previous')}
             </button>
             <span className="px-4 py-2 text-sm text-neutral-500 dark:text-neutral-400">
-              Page {page} of {totalPages}
+              {t('pageOf', { current: String(page), total: String(totalPages) })}
             </span>
             <button
               onClick={() => setPage(Math.min(totalPages, page + 1))}
@@ -117,7 +119,7 @@ export default function OrdersPage() {
                   : 'border-neutral-300 text-neutral-700 hover:bg-neutral-50 dark:border-neutral-600 dark:text-neutral-300 dark:hover:bg-neutral-800'
               )}
             >
-              Next
+              {t('next')}
               <ChevronRightIcon className="h-4 w-4" />
             </button>
           </div>

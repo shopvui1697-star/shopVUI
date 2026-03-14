@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -14,6 +15,7 @@ interface ResellerOrder {
 }
 
 export default function ResellerOrdersPage() {
+  const t = useTranslations('reseller.orders');
   const [orders, setOrders] = useState<ResellerOrder[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,22 +32,22 @@ export default function ResellerOrdersPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="p-8 text-center">Loading orders...</div>;
+  if (loading) return <div className="p-8 text-center">{t('loadingOrders')}</div>;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">My Orders</h1>
+      <h1 className="text-2xl font-bold mb-6">{t('title')}</h1>
       {orders.length === 0 ? (
-        <p className="text-gray-500">No orders linked to your coupon yet.</p>
+        <p className="text-gray-500">{t('noOrders')}</p>
       ) : (
         <table className="w-full bg-white rounded-lg shadow">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-sm">Order</th>
-              <th className="px-4 py-3 text-left text-sm">Date</th>
-              <th className="px-4 py-3 text-right text-sm">Order Total</th>
-              <th className="px-4 py-3 text-right text-sm">Commission</th>
-              <th className="px-4 py-3 text-left text-sm">Status</th>
+              <th className="px-4 py-3 text-left text-sm">{t('order')}</th>
+              <th className="px-4 py-3 text-left text-sm">{t('date')}</th>
+              <th className="px-4 py-3 text-right text-sm">{t('orderTotal')}</th>
+              <th className="px-4 py-3 text-right text-sm">{t('commission')}</th>
+              <th className="px-4 py-3 text-left text-sm">{t('status')}</th>
             </tr>
           </thead>
           <tbody>

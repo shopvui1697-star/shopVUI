@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { getProduct, getPriceTiers, getProducts } from '../../../lib/api';
 import { formatCurrency } from '@shopvui/shared';
 import { GridTileImage } from '../../../components/grid/tile';
@@ -20,7 +21,8 @@ export async function generateMetadata({
   const product = await getProduct(id);
 
   if (!product) {
-    return { title: 'Product not found - ShopVUI' };
+    const t = await getTranslations('products');
+    return { title: t('productNotFound') };
   }
 
   const primaryImage = product.images[0];
@@ -39,31 +41,31 @@ export async function generateMetadata({
   };
 }
 
-function StockBadge({ stockQuantity }: { stockQuantity: number }) {
+function StockBadge({ stockQuantity, labels }: { stockQuantity: number; labels: { outOfStock: string; lowStock: string; inStock: string } }) {
   if (stockQuantity <= 0) {
     return (
       <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
-        Out of Stock
+        {labels.outOfStock}
       </span>
     );
   }
   if (stockQuantity <= 10) {
     return (
       <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
-        Low Stock &mdash; {stockQuantity} left
+        {labels.lowStock}
       </span>
     );
   }
   return (
     <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
-      In Stock
+      {labels.inStock}
     </span>
   );
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { id } = await params;
-  const [product, tiers] = await Promise.all([getProduct(id), getPriceTiers(id)]);
+  const [product, tiers, t] = await Promise.all([getProduct(id), getPriceTiers(id), getTranslations('products')]);
 
   if (!product) {
     notFound();
@@ -80,7 +82,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           href="/products"
           className="mb-4 inline-flex items-center text-sm text-neutral-500 underline-offset-4 hover:text-black hover:underline dark:text-neutral-400 dark:hover:text-white"
         >
-          &larr; Back to products
+          {t('backToProducts')}
         </Link>
 
         <div className="flex flex-col gap-8 md:flex-row">
@@ -96,7 +98,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-neutral-100 dark:bg-neutral-900">
-                  <span className="text-neutral-400">No image</span>
+                  <span className="text-neutral-400">{t('noImage')}</span>
                 </div>
               )}
             </div>
@@ -156,7 +158,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
 
             <div className="mt-4">
-              <StockBadge stockQuantity={product.stockQuantity} />
+              <StockBadge stockQuantity={product.stockQuantity} labels={{ outOfStock: t('outOfStock'), lowStock: t('lowStock', { count: String(product.stockQuantity) }), inStock: t('inStock') }} />
             </div>
 
             {tiers.length > 0 && (
@@ -172,7 +174,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
             <div className="mt-6 border-t border-neutral-200 pt-6 dark:border-neutral-800">
               <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                Description
+                {t('description')}
               </h2>
               <div
                 className="prose prose-sm max-w-none text-neutral-600 dark:prose-invert dark:text-neutral-300"
@@ -188,7 +190,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         {relatedProducts.length > 0 && (
           <div className="mt-16">
             <h2 className="mb-4 text-2xl font-bold text-black dark:text-white">
-              Related Products
+              {t('relatedProducts')}
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {relatedProducts.map((rp) => {

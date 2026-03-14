@@ -2,11 +2,13 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations('login');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -22,9 +24,9 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-[calc(100vh-60px)] items-center justify-center px-4 py-8">
       <div className="w-full max-w-md rounded-lg border border-neutral-200 bg-white p-8 text-center dark:border-neutral-700 dark:bg-neutral-900">
-        <h1 className="mb-2 text-2xl font-bold text-black dark:text-white">Sign In</h1>
+        <h1 className="mb-2 text-2xl font-bold text-black dark:text-white">{t('title')}</h1>
         <p className="mb-8 text-sm text-neutral-500 dark:text-neutral-400">
-          Sign in to your account to place orders and track purchases.
+          {t('subtitle')}
         </p>
 
         <button
@@ -49,7 +51,7 @@ export default function LoginPage() {
               d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
             />
           </svg>
-          Continue with Google
+          {t('continueWithGoogle')}
         </button>
       </div>
     </main>

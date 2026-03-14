@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import type { Category } from '@shopvui/shared';
 
 interface SearchFilterProps {
@@ -11,6 +12,7 @@ interface SearchFilterProps {
 
 export function SearchFilter({ categories }: SearchFilterProps) {
   const searchParams = useSearchParams();
+  const t = useTranslations('products');
   const currentCategoryId = searchParams.get('categoryId') ?? '';
 
   const createUrl = useCallback(
@@ -38,7 +40,7 @@ export function SearchFilter({ categories }: SearchFilterProps) {
     <div className="order-first w-full flex-none md:max-w-[125px]">
       <nav>
         <h3 className="hidden text-xs font-semibold uppercase tracking-wide text-neutral-500 dark:text-neutral-400 md:block">
-          Categories
+          {t('categories')}
         </h3>
         <ul className="mt-2 hidden md:block">
           <li className="mb-1">
@@ -51,7 +53,7 @@ export function SearchFilter({ categories }: SearchFilterProps) {
                   : 'text-neutral-500 dark:text-neutral-400',
               )}
             >
-              All
+              {t('all')}
             </a>
           </li>
           {allCategories.map((cat) => (

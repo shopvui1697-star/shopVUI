@@ -1,12 +1,16 @@
+'use client';
+
 import Link from 'next/link';
 import clsx from 'clsx';
-
-const footerLinks = [
-  { href: '/products', label: 'Products' },
-  { href: '/orders', label: 'Orders' },
-];
+import { useTranslations } from 'next-intl';
 
 export function Footer() {
+  const t = useTranslations('footer');
+
+  const footerLinks = [
+    { href: '/products', label: t('products') },
+    { href: '/orders', label: t('orders') },
+  ];
   return (
     <footer
       className={clsx(
@@ -36,7 +40,7 @@ export function Footer() {
         </div>
 
         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          &copy; {new Date().getFullYear()} ShopVUI. All rights reserved.
+          {t('copyright', { year: new Date().getFullYear() })}
         </p>
       </div>
     </footer>

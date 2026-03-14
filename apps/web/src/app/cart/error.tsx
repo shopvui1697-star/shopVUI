@@ -2,6 +2,7 @@
 
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 export default function CartError({
   _error,
@@ -10,6 +11,7 @@ export default function CartError({
   _error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations('common');
   return (
     <main className="mx-auto flex max-w-lg flex-col items-center px-4 py-20 text-center">
       <div
@@ -22,11 +24,11 @@ export default function CartError({
       </div>
 
       <h2 className="mt-6 text-xl font-bold text-black dark:text-white">
-        Unable to load your cart
+        {t('unableToLoadCart')}
       </h2>
 
       <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">
-        We couldn&apos;t load your cart right now. Your items are still saved.
+        {t('cartErrorDescription')}
       </p>
 
       <button
@@ -36,7 +38,7 @@ export default function CartError({
           'bg-blue-600 text-white hover:bg-blue-700'
         )}
       >
-        Try again
+        {t('tryAgain')}
       </button>
     </main>
   );

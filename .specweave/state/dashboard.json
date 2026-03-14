@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-03-14T03:20:03Z",
+  "updatedAt": "2026-03-14T12:16:22Z",
   "increments": {
     "0001-project-setup": {
       "status": "active",
@@ -235,20 +235,38 @@
       "createdAt": "2026-03-14T00:00:00.000Z",
       "lastActivity": "2026-03-14T10:19:39Z",
       "userStories": []
+    },
+    "0014-multi-language": {
+      "status": "ready_for_review",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 12,
+        "completed": 12
+      },
+      "acs": {
+        "total": 21,
+        "completed": 21
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-14T19:15:59Z",
+      "userStories": []
     }
   },
   "summary": {
-    "total": 13,
+    "total": 14,
     "active": 5,
     "paused": 0,
     "backlog": 0,
     "planning": 0,
-    "ready_for_review": 4,
+    "ready_for_review": 5,
     "completed": 4,
     "abandoned": 0,
     "archived": 0,
     "byType": {
-      "feature": 13,
+      "feature": 14,
       "hotfix": 0,
       "bug": 0,
       "refactor": 0,
@@ -257,7 +275,7 @@
     },
     "byPriority": {
       "P0": 0,
-      "P1": 11,
+      "P1": 12,
       "P2": 2,
       "P3": 0
     },
@@ -340,6 +358,11 @@
       "metadata": 1773458379,
       "tasks": 1773458391,
       "spec": 1773458403
+    },
+    "0014-multi-language": {
+      "metadata": 1773490559,
+      "tasks": 1773490566,
+      "spec": 1773490582
     }
   }
 }

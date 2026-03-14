@@ -2,22 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 const PUBLIC_PATHS = ['/reseller/register', '/reseller/login'];
 
-const NAV_ITEMS = [
-  { href: '/reseller/dashboard', label: 'Dashboard' },
-  { href: '/reseller/orders', label: 'Orders' },
-  { href: '/reseller/commissions', label: 'Commissions' },
-  { href: '/reseller/coupons', label: 'Coupons' },
-  { href: '/reseller/profile', label: 'Profile' },
-];
-
 export default function ResellerLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('reseller');
   const [ready, setReady] = useState(false);
+
+  const NAV_ITEMS = [
+    { href: '/reseller/dashboard', label: t('nav.dashboard') },
+    { href: '/reseller/orders', label: t('nav.orders') },
+    { href: '/reseller/commissions', label: t('nav.commissions') },
+    { href: '/reseller/coupons', label: t('nav.coupons') },
+    { href: '/reseller/profile', label: t('nav.profile') },
+  ];
 
   useEffect(() => {
     if (PUBLIC_PATHS.includes(pathname)) {
@@ -47,14 +49,14 @@ export default function ResellerLayout({ children }: { children: React.ReactNode
 
   const isPublic = PUBLIC_PATHS.includes(pathname);
 
-  if (!ready) return <div className="p-8 text-center">Loading...</div>;
+  if (!ready) return <div className="p-8 text-center">{t('loading')}</div>;
 
   if (isPublic) return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white border-b px-6 py-3 flex items-center gap-6">
-        <span className="font-bold text-lg">Reseller Portal</span>
+        <span className="font-bold text-lg">{t('portal')}</span>
         {NAV_ITEMS.map((item) => (
           <Link
             key={item.href}
@@ -71,7 +73,7 @@ export default function ResellerLayout({ children }: { children: React.ReactNode
             router.replace('/reseller/login');
           }}
         >
-          Logout
+          {t('logout')}
         </button>
       </nav>
       <main className="max-w-6xl mx-auto p-6">{children}</main>

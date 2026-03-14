@@ -1,5 +1,8 @@
 import type { NextConfig } from 'next';
 import withSerwist from '@serwist/next';
+import createNextIntlPlugin from 'next-intl/plugin';
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
   transpilePackages: ['@shopvui/ui', '@shopvui/shared'],
@@ -27,8 +30,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSerwist({
-  swSrc: 'src/app/sw.ts',
-  swDest: 'public/sw.js',
-  disable: process.env.NODE_ENV === 'development',
-})(nextConfig);
+export default withNextIntl(
+  withSerwist({
+    swSrc: 'src/app/sw.ts',
+    swDest: 'public/sw.js',
+    disable: process.env.NODE_ENV === 'development',
+  })(nextConfig)
+);

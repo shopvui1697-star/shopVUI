@@ -12,22 +12,26 @@ import {
   ChevronDownIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Search } from './search';
 import { CartModal } from '../../cart/cart-modal';
-
-const navLinks = [
-  { href: '/products', label: 'Products' },
-  { href: '/orders', label: 'Orders' },
-];
-
-const userMenuLinks = [
-  { href: '/orders', label: 'My Orders', icon: ShoppingBagIcon },
-  { href: '/account/wishlist', label: 'Wishlist', icon: HeartIcon },
-  { href: '/account/addresses', label: 'My Addresses', icon: MapPinIcon },
-];
+import { LanguageSwitcher } from '../../LanguageSwitcher';
+import { ThemeToggle } from '../../ThemeToggle';
 
 export function Navbar() {
+  const t = useTranslations('nav');
+
+  const navLinks = [
+    { href: '/products', label: t('products') },
+    { href: '/orders', label: t('orders') },
+  ];
+
+  const userMenuLinks = [
+    { href: '/orders', label: t('myOrders'), icon: ShoppingBagIcon },
+    { href: '/account/wishlist', label: t('wishlist'), icon: HeartIcon },
+    { href: '/account/addresses', label: t('myAddresses'), icon: MapPinIcon },
+  ];
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -200,6 +204,9 @@ export function Navbar() {
                         ))}
                       </ul>
 
+                      <LanguageSwitcher variant="dropdown-item" onSelect={() => setDropdownOpen(false)} />
+                      <ThemeToggle variant="dropdown-item" onToggle={() => setDropdownOpen(false)} />
+
                       {/* Logout */}
                       <div className="border-t py-1 dark:border-neutral-700">
                         <button
@@ -212,24 +219,28 @@ export function Navbar() {
                           )}
                         >
                           <ArrowRightStartOnRectangleIcon className="h-4 w-4" />
-                          Sign out
+                          {t('signOut')}
                         </button>
                       </div>
                     </div>
                   )}
                 </div>
               ) : (
-                <Link
-                  href="/login"
-                  className={clsx(
-                    'flex items-center gap-1.5 text-sm font-medium',
-                    'text-neutral-600 hover:text-black',
-                    'dark:text-neutral-400 dark:hover:text-white'
-                  )}
-                >
-                  <UserCircleIcon className="h-5 w-5" />
-                  Login
-                </Link>
+                <>
+                  <Link
+                    href="/login"
+                    className={clsx(
+                      'flex items-center gap-1.5 text-sm font-medium',
+                      'text-neutral-600 hover:text-black',
+                      'dark:text-neutral-400 dark:hover:text-white'
+                    )}
+                  >
+                    <UserCircleIcon className="h-5 w-5" />
+                    {t('login')}
+                  </Link>
+                  <LanguageSwitcher variant="standalone" />
+                  <ThemeToggle />
+                </>
               )}
             </>
           )}
@@ -239,18 +250,6 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile nav links */}
-      <div className="flex gap-4 overflow-x-auto border-t px-4 py-2 md:hidden dark:border-neutral-800">
-        {navLinks.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className="whitespace-nowrap text-sm text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white"
-          >
-            {label}
-          </Link>
-        ))}
-      </div>
     </nav>
   );
 }

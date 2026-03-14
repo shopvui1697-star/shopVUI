@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import * as api from '@/lib/api';
 
 const STATUSES = ['ALL', 'PENDING', 'MATURING', 'APPROVED', 'PAID', 'VOIDED'] as const;
@@ -21,6 +22,7 @@ interface Commission {
 }
 
 export default function ResellerCommissionsPage() {
+  const t = useTranslations('reseller.commissions');
   const [commissions, setCommissions] = useState<Commission[]>([]);
   const [activeTab, setActiveTab] = useState<string>('ALL');
   const [loading, setLoading] = useState(true);
@@ -45,31 +47,41 @@ export default function ResellerCommissionsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Commissions</h1>
+      <h1 className="text-2xl font-bold mb-4">{t('title')}</h1>
       <div className="flex gap-2 mb-4">
-        {STATUSES.map((s) => (
-          <button
-            key={s}
-            onClick={() => setActiveTab(s)}
-            className={`px-3 py-1 rounded text-sm ${activeTab === s ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-          >
-            {s}
-          </button>
-        ))}
+        {STATUSES.map((s) => {
+          const labelMap: Record<string, string> = {
+            ALL: t('all'),
+            PENDING: t('pending'),
+            MATURING: t('maturing'),
+            APPROVED: t('approved'),
+            PAID: t('paidStatus'),
+            VOIDED: t('voided'),
+          };
+          return (
+            <button
+              key={s}
+              onClick={() => setActiveTab(s)}
+              className={`px-3 py-1 rounded text-sm ${activeTab === s ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+            >
+              {labelMap[s]}
+            </button>
+          );
+        })}
       </div>
 
       {loading ? (
-        <p className="text-center py-8">Loading...</p>
+        <p className="text-center py-8">{t('loading')}</p>
       ) : commissions.length === 0 ? (
-        <p className="text-gray-500">No commissions found.</p>
+        <p className="text-gray-500">{t('noCommissions')}</p>
       ) : (
         <table className="w-full bg-white rounded-lg shadow">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-sm">Order</th>
-              <th className="px-4 py-3 text-right text-sm">Amount</th>
-              <th className="px-4 py-3 text-left text-sm">Status</th>
-              <th className="px-4 py-3 text-left text-sm">Info</th>
+              <th className="px-4 py-3 text-left text-sm">{t('order')}</th>
+              <th className="px-4 py-3 text-right text-sm">{t('amount')}</th>
+              <th className="px-4 py-3 text-left text-sm">{t('status')}</th>
+              <th className="px-4 py-3 text-left text-sm">{t('info')}</th>
             </tr>
           </thead>
           <tbody>
@@ -90,10 +102,10 @@ export default function ResellerCommissionsPage() {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-500">
                   {c.status === 'MATURING' && c.maturityDate && (
-                    <span>{daysRemaining(c.maturityDate)} days remaining</span>
+                    <span>{t('daysRemaining', { days: daysRemaining(c.maturityDate) ?? 0 })}</span>
                   )}
                   {c.status === 'PAID' && c.paidAt && (
-                    <span>Paid {new Date(c.paidAt).toLocaleDateString()}</span>
+                    <span>{t('paid', { date: new Date(c.paidAt).toLocaleDateString() })}</span>
                   )}
                   {c.status === 'VOIDED' && c.voidReason && (
                     <span>{c.voidReason}</span>

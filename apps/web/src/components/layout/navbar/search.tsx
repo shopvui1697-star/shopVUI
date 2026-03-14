@@ -4,8 +4,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 export function Search() {
+  const t = useTranslations('search');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('search') || '');
@@ -35,7 +37,7 @@ export function Search() {
       <input
         type="text"
         name="search"
-        placeholder="Search for products..."
+        placeholder={t('placeholder')}
         autoComplete="off"
         value={query}
         onChange={(e) => setQuery(e.target.value)}

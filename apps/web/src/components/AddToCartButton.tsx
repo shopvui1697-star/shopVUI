@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -27,6 +28,8 @@ export function AddToCartButton({ productId, inStock }: AddToCartButtonProps) {
   const [adding, setAdding] = useState(false);
   const { addItem } = useCart();
   const { token } = useAuth();
+  const t = useTranslations('addToCart');
+  const tCart = useTranslations('cart');
 
   const handleAdd = async () => {
     setAdding(true);
@@ -49,7 +52,7 @@ export function AddToCartButton({ productId, inStock }: AddToCartButtonProps) {
         )}
         data-testid="add-to-cart"
       >
-        Sign in to Add to Cart
+        {t('signInToAdd')}
       </Link>
     );
   }
@@ -65,7 +68,7 @@ export function AddToCartButton({ productId, inStock }: AddToCartButtonProps) {
         )}
         data-testid="add-to-cart"
       >
-        Out of Stock
+        {t('outOfStock')}
       </button>
     );
   }
@@ -76,7 +79,7 @@ export function AddToCartButton({ productId, inStock }: AddToCartButtonProps) {
         <button
           onClick={() => setQuantity(Math.max(1, quantity - 1))}
           className="px-4 py-2 text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white"
-          aria-label="Decrease quantity"
+          aria-label={tCart('decreaseQuantity')}
         >
           &minus;
         </button>
@@ -86,7 +89,7 @@ export function AddToCartButton({ productId, inStock }: AddToCartButtonProps) {
         <button
           onClick={() => setQuantity(quantity + 1)}
           className="px-4 py-2 text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-white"
-          aria-label="Increase quantity"
+          aria-label={tCart('increaseQuantity')}
         >
           +
         </button>
@@ -109,7 +112,7 @@ export function AddToCartButton({ productId, inStock }: AddToCartButtonProps) {
         ) : (
           <>
             <PlusIcon className="h-5 w-5" />
-            Add to Cart
+            {t('addToCart')}
           </>
         )}
       </button>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { HeartIcon as HeartOutline } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolid } from '@heroicons/react/24/solid';
 import clsx from 'clsx';
@@ -17,6 +18,7 @@ export function WishlistButton({ productId, initialInWishlist, slug }: WishlistB
   const [inWishlist, setInWishlist] = useState(initialInWishlist);
   const [toggling, setToggling] = useState(false);
   const router = useRouter();
+  const t = useTranslations('wishlistButton');
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
@@ -62,7 +64,7 @@ export function WishlistButton({ productId, initialInWishlist, slug }: WishlistB
       ) : (
         <HeartOutline className="h-5 w-5" />
       )}
-      {inWishlist ? 'Saved' : 'Add to Wishlist'}
+      {inWishlist ? t('saved') : t('addToWishlist')}
     </button>
   );
 }

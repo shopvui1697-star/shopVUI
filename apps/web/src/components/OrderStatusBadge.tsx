@@ -1,5 +1,8 @@
+'use client';
+
 import clsx from 'clsx';
 import type { OrderStatus } from '@shopvui/shared';
+import { useTranslations } from 'next-intl';
 
 const STATUS_STYLES: Record<OrderStatus, string> = {
   PENDING: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
@@ -10,16 +13,17 @@ const STATUS_STYLES: Record<OrderStatus, string> = {
   RETURNED: 'bg-violet-100 text-violet-800 dark:bg-violet-900/30 dark:text-violet-400',
 };
 
-const STATUS_LABELS: Record<OrderStatus, string> = {
-  PENDING: 'Pending',
-  CONFIRMED: 'Confirmed',
-  SHIPPING: 'Shipping',
-  DELIVERED: 'Delivered',
-  CANCELLED: 'Cancelled',
-  RETURNED: 'Returned',
+const STATUS_LABEL_KEYS: Record<OrderStatus, string> = {
+  PENDING: 'statusPending',
+  CONFIRMED: 'statusConfirmed',
+  SHIPPING: 'statusShipping',
+  DELIVERED: 'statusDelivered',
+  CANCELLED: 'statusCancelled',
+  RETURNED: 'statusReturned',
 };
 
 export function OrderStatusBadge({ status }: { status: OrderStatus }) {
+  const t = useTranslations('orders');
   return (
     <span
       className={clsx(
@@ -28,7 +32,7 @@ export function OrderStatusBadge({ status }: { status: OrderStatus }) {
       )}
       data-testid="order-status-badge"
     >
-      {STATUS_LABELS[status] || status}
+      {STATUS_LABEL_KEYS[status] ? t(STATUS_LABEL_KEYS[status]) : status}
     </span>
   );
 }

@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import { ProductCard, CategoryPill, SearchBar } from '@shopvui/ui';
 import type { Product, Category, PaginatedResponse } from '@shopvui/shared';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 interface ProductsClientProps {
   initialProducts: PaginatedResponse<Product>;
@@ -21,6 +22,7 @@ export function ProductsClient({
 }: ProductsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('products');
 
   const updateParams = useCallback(
     (updates: Record<string, string | undefined>) => {
@@ -86,7 +88,7 @@ export function ProductsClient({
       </div>
 
       {products.length === 0 ? (
-        <p data-testid="empty-state">No products found</p>
+        <p data-testid="empty-state">{t('noProducts')}</p>
       ) : (
         <>
           <div
@@ -110,17 +112,17 @@ export function ProductsClient({
                 onClick={() => handlePageChange(page - 1)}
                 data-testid="prev-page"
               >
-                Previous
+                {t('previous')}
               </button>
               <span>
-                Page {page} of {totalPages}
+                {t('pageOf', { current: String(page), total: String(totalPages) })}
               </span>
               <button
                 disabled={page >= totalPages}
                 onClick={() => handlePageChange(page + 1)}
                 data-testid="next-page"
               >
-                Next
+                {t('next')}
               </button>
             </div>
           )}

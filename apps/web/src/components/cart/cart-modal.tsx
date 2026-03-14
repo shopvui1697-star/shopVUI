@@ -18,12 +18,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import clsx from 'clsx';
 import { formatCurrency } from '@shopvui/shared';
+import { useTranslations } from 'next-intl';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 export function CartModal() {
   const { cart, itemCount, updateItem, removeItem, isLoading } = useCart();
   const { user } = useAuth();
+  const t = useTranslations('cart');
   const [isOpen, setIsOpen] = useState(false);
   const prevItemCount = useRef(itemCount);
 
@@ -42,7 +44,7 @@ export function CartModal() {
   return (
     <>
       <button
-        aria-label="Open cart"
+        aria-label={t('openCart')}
         onClick={() => setIsOpen(true)}
         className={clsx(
           'relative flex h-11 w-11 items-center justify-center rounded-md',
@@ -98,10 +100,10 @@ export function CartModal() {
               {/* Header */}
               <div className="flex items-center justify-between">
                 <DialogTitle className="text-lg font-semibold text-black dark:text-white">
-                  My Cart
+                  {t('myCart')}
                 </DialogTitle>
                 <button
-                  aria-label="Close cart"
+                  aria-label={t('closeCart')}
                   onClick={() => setIsOpen(false)}
                   className={clsx(
                     'flex h-8 w-8 items-center justify-center rounded-md',
@@ -118,7 +120,7 @@ export function CartModal() {
                 <div className="mt-20 flex w-full flex-col items-center justify-center overflow-hidden">
                   <ShoppingCartIcon className="h-16 w-16 text-neutral-300 dark:text-neutral-600" />
                   <p className="mt-6 text-center text-2xl font-bold text-neutral-500 dark:text-neutral-400">
-                    Your cart is empty.
+                    {t('emptyTitleModal')}
                   </p>
                 </div>
               ) : (
@@ -195,7 +197,7 @@ export function CartModal() {
                                     updateItem(item.id, item.quantity - 1);
                                   }
                                 }}
-                                aria-label="Decrease quantity"
+                                aria-label={t('decreaseQuantity')}
                                 disabled={isLoading}
                                 className={clsx(
                                   'flex h-7 w-7 items-center justify-center rounded-full transition-colors',
@@ -210,7 +212,7 @@ export function CartModal() {
                               </span>
                               <button
                                 onClick={() => updateItem(item.id, item.quantity + 1)}
-                                aria-label="Increase quantity"
+                                aria-label={t('increaseQuantity')}
                                 disabled={isLoading}
                                 className={clsx(
                                   'flex h-7 w-7 items-center justify-center rounded-full transition-colors',
@@ -230,7 +232,7 @@ export function CartModal() {
 
                           {item.tierApplied && (
                             <span className="mt-0.5 text-xs text-emerald-600 dark:text-emerald-400">
-                              Tier: {item.tierApplied}
+                              {t('tier', { tier: item.tierApplied })}
                             </span>
                           )}
                         </div>
@@ -241,11 +243,11 @@ export function CartModal() {
                   {/* Footer */}
                   <div className="border-t border-neutral-200 pt-4 dark:border-neutral-700">
                     <div className="mb-2 flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
-                      <span>Subtotal</span>
+                      <span>{t('subtotal')}</span>
                       <span>{formatCurrency(cart.subtotal, 'VND')}</span>
                     </div>
                     <div className="mb-4 flex items-center justify-between text-base font-bold text-black dark:text-white">
-                      <span>Total</span>
+                      <span>{t('total')}</span>
                       <span>{formatCurrency(cart.total, 'VND')}</span>
                     </div>
 
@@ -260,7 +262,7 @@ export function CartModal() {
                           'dark:bg-white dark:text-black'
                         )}
                       >
-                        Sign in to checkout
+                        {t('signInToCheckout')}
                       </Link>
                     ) : (
                       <Link
@@ -272,7 +274,7 @@ export function CartModal() {
                           'hover:bg-blue-700 transition-colors'
                         )}
                       >
-                        Proceed to Checkout
+                        {t('proceedToCheckout')}
                       </Link>
                     )}
                   </div>

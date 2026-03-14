@@ -1,18 +1,25 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 import clsx from 'clsx';
 import { AuthProvider } from '../contexts/AuthContext';
 import { CartWithAuth } from '../components/CartWithAuth';
 import { CouponCapture } from '../components/CouponCapture';
 import { Navbar } from '../components/layout/navbar';
+import { ThemeProvider } from '../components/ThemeProvider';
 import './globals.css';
 
+export const viewport: Viewport = {
+  themeColor: '#4f46e5',
+};
+
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'),
   title: 'ShopVUI',
   description: 'Voice-powered shopping experience',
   manifest: '/manifest.json',
-  themeColor: '#4f46e5',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -34,9 +41,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en" className={clsx(GeistSans.variable, GeistMono.variable)}>
+    <html lang={locale} className={clsx(GeistSans.variable, GeistMono.variable)} suppressHydrationWarning>
       <body
         className={clsx(
           'bg-neutral-50 text-black selection:bg-teal-300',
@@ -44,13 +54,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           'antialiased font-sans'
         )}
       >
-        <AuthProvider>
-          <CartWithAuth>
-            <CouponCapture />
-            <Navbar />
-            <main className="pt-6">{children}</main>
-          </CartWithAuth>
-        </AuthProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <ThemeProvider>
+            <AuthProvider>
+              <CartWithAuth>
+                <CouponCapture />
+                <Navbar />
+                <main className="pt-6">{children}</main>
+              </CartWithAuth>
+            </AuthProvider>
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

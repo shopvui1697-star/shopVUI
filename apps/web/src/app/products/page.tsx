@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { getProducts, getCategories } from '../../lib/api';
 import { GridTileImage } from '../../components/grid/tile';
 import { Footer } from '../../components/layout/footer';
@@ -12,6 +13,7 @@ interface ProductsPageProps {
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
   const params = await searchParams;
   const page = params.page ? parseInt(params.page, 10) : 1;
+  const t = await getTranslations('products');
 
   const [productsData, categories] = await Promise.all([
     getProducts({
@@ -34,18 +36,18 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         <div className="min-h-screen w-full">
           {params.search ? (
             <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">
-              Showing results for{' '}
+              {t('showingResults')}{' '}
               <span className="font-semibold text-black dark:text-white">
                 &lsquo;{params.search}&rsquo;
               </span>
             </p>
           ) : (
-            <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">All Products</p>
+            <p className="mb-4 text-sm text-neutral-500 dark:text-neutral-400">{t('allProducts')}</p>
           )}
 
           {products.length === 0 ? (
             <p className="py-12 text-center text-lg text-neutral-500 dark:text-neutral-400" data-testid="empty-state">
-              No products found
+              {t('noProducts')}
             </p>
           ) : (
             <>
@@ -82,15 +84,15 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       className="rounded-full border border-neutral-200 px-4 py-2 text-sm text-neutral-600 hover:border-blue-600 hover:text-blue-600 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-blue-500 dark:hover:text-blue-500"
                       data-testid="prev-page"
                     >
-                      Previous
+                      {t('previous')}
                     </Link>
                   ) : (
                     <span className="cursor-not-allowed rounded-full border border-neutral-100 px-4 py-2 text-sm text-neutral-300 dark:border-neutral-800 dark:text-neutral-600">
-                      Previous
+                      {t('previous')}
                     </span>
                   )}
                   <span className="text-sm text-neutral-500 dark:text-neutral-400">
-                    Page {page} of {totalPages}
+                    {t('pageOf', { current: String(page), total: String(totalPages) })}
                   </span>
                   {page < totalPages ? (
                     <Link
@@ -98,11 +100,11 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
                       className="rounded-full border border-neutral-200 px-4 py-2 text-sm text-neutral-600 hover:border-blue-600 hover:text-blue-600 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-blue-500 dark:hover:text-blue-500"
                       data-testid="next-page"
                     >
-                      Next
+                      {t('next')}
                     </Link>
                   ) : (
                     <span className="cursor-not-allowed rounded-full border border-neutral-100 px-4 py-2 text-sm text-neutral-300 dark:border-neutral-800 dark:text-neutral-600">
-                      Next
+                      {t('next')}
                     </span>
                   )}
                 </div>
