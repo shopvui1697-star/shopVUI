@@ -58,3 +58,4 @@ export type {
   AdminReviewListItem,
 } from './review.js';
 export { formatCurrency } from './utils/currency.js';
+export { isImageUrl, findFirstImageUrl } from './utils/media.js';

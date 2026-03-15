@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException, Inject, forwardRef, Logger } from '@nestjs/common';
 import { prisma } from '@shopvui/db';
+import { findFirstImageUrl } from '@shopvui/shared';
 import { CommissionsService } from '../commissions/commissions.service';
 import { EmailService } from '../email/email.service';
 import { NotificationService } from '../notification/notification.service';
@@ -53,7 +54,7 @@ export class OrdersService {
         items: {
           include: {
             product: {
-              include: { images: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+              include: { images: { orderBy: { sortOrder: 'asc' } } },
             },
           },
         },
@@ -77,7 +78,7 @@ export class OrdersService {
         id: i.id,
         productId: i.productId,
         productName: i.product.name,
-        productImage: i.product.images[0]?.url ?? null,
+        productImage: findFirstImageUrl(i.product.images),
         quantity: i.quantity,
         unitPrice: i.unitPrice,
         subtotal: i.subtotal,
