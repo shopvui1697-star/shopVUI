@@ -1,0 +1,8 @@
+{
+  "version": "1.0",
+  "incrementId": "0018-nextjs-16-upgrade",
+  "timestamp": "2026-03-15T13:50:00.000Z",
+  "verdict": "WAIVED",
+  "reason": "No external model consent configured. Waived per policy.",
+  "findings": []
+}
