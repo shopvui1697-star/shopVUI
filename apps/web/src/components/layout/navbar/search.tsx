@@ -3,18 +3,23 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 
-export function Search() {
+export function Search({ onNavigate }: { onNavigate?: () => void } = {}) {
   const t = useTranslations('search');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('search') || '');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setQuery(searchParams.get('search') || '');
   }, [searchParams]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +29,7 @@ export function Search() {
     } else {
       router.push('/products');
     }
+    onNavigate?.();
   };
 
   return (
@@ -35,6 +41,7 @@ export function Search() {
         )}
       />
       <input
+        ref={inputRef}
         type="text"
         name="search"
         placeholder={t('placeholder')}
