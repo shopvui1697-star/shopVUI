@@ -146,6 +146,26 @@ export class AdminProductsService {
     });
   }
 
+  async addImageByUrl(productId: string, url: string, alt?: string) {
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product) throw new NotFoundException('Product not found');
+
+    const maxSort = await prisma.productImage.findFirst({
+      where: { productId },
+      orderBy: { sortOrder: 'desc' },
+      select: { sortOrder: true },
+    });
+
+    return prisma.productImage.create({
+      data: {
+        productId,
+        url,
+        alt: alt || null,
+        sortOrder: (maxSort?.sortOrder ?? -1) + 1,
+      },
+    });
+  }
+
   async updateImage(productId: string, imageId: string, data: { alt?: string }) {
     await this.ensureProductExists(productId);
     const image = await prisma.productImage.findFirst({

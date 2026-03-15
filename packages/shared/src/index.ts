@@ -46,4 +46,5 @@ export type {
   CsvImportResult,
   OrderStatusTransition,
 } from './admin.js';
+export type { NotificationType, NotificationData, NotificationTemplateData, UnreadCountResponse } from './notification.js';
 export { formatCurrency } from './utils/currency.js';

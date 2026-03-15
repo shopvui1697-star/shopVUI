@@ -9,6 +9,9 @@ import { Footer } from '../../../components/layout/footer';
 import { PriceTierTable } from '../../../components/PriceTierTable';
 import { AddToCartButton } from '../../../components/AddToCartButton';
 import { WishlistButton } from '../../../components/WishlistButton';
+import { NotifyAdminButton } from '../../../components/NotifyAdminButton';
+import { ProductGallery } from '../../../components/ProductGallery';
+import { findFirstImage } from '../../../lib/media';
 
 interface ProductDetailPageProps {
   params: Promise<{ id: string }>;
@@ -25,7 +28,7 @@ export async function generateMetadata({
     return { title: t('productNotFound') };
   }
 
-  const primaryImage = product.images[0];
+  const primaryImage = findFirstImage(product.images);
 
   return {
     title: `${product.name} - ShopVUI`,
@@ -71,7 +74,6 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     notFound();
   }
 
-  const primaryImage = product.images[0];
   const relatedProductsData = await getProducts({ categoryId: product.categoryId, pageSize: 4 });
   const relatedProducts = relatedProductsData.data.filter((p) => p.id !== product.id).slice(0, 3);
 
@@ -86,40 +88,13 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         </Link>
 
         <div className="flex flex-col gap-8 md:flex-row">
-          {/* Image Gallery */}
+          {/* Image / Video Gallery */}
           <div className="w-full md:w-4/6">
-            <div className="relative aspect-square overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-black">
-              {primaryImage ? (
-                <img
-                  src={primaryImage.url}
-                  alt={primaryImage.alt ?? product.name}
-                  className="h-full w-full object-contain"
-                  data-testid="primary-image"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-neutral-100 dark:bg-neutral-900">
-                  <span className="text-neutral-400">{t('noImage')}</span>
-                </div>
-              )}
-            </div>
-
-            {product.images.length > 1 && (
-              <div className="mt-2 flex gap-2">
-                {product.images.map((img) => (
-                  <div
-                    key={img.id}
-                    className="relative h-20 w-20 overflow-hidden rounded-lg border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-black"
-                  >
-                    <img
-                      src={img.url}
-                      alt={img.alt ?? product.name}
-                      className="h-full w-full object-cover"
-                      data-testid="thumbnail"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+            <ProductGallery
+              images={product.images}
+              productName={product.name}
+              noImageLabel={t('noImage')}
+            />
           </div>
 
           {/* Product Info */}
@@ -170,6 +145,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             <div className="mt-6 space-y-3">
               <AddToCartButton productId={product.id} inStock={product.stockQuantity > 0} />
               <WishlistButton productId={product.id} initialInWishlist={false} slug={id} />
+              <NotifyAdminButton productId={product.id} productName={product.name} />
             </div>
 
             <div className="mt-6 border-t border-neutral-200 pt-6 dark:border-neutral-800">
@@ -194,7 +170,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {relatedProducts.map((rp) => {
-                const rpImage = rp.images[0];
+                const rpImage = findFirstImage(rp.images);
                 return (
                   <Link
                     key={rp.id}

@@ -20,6 +20,7 @@ import { EmailModule } from './email/email.module';
 import { AdminModule } from './admin/admin.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { ChannelsModule } from './channels/channels.module';
+import { NotificationModule } from './notification/notification.module';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
 @Module({
@@ -49,6 +50,7 @@ import { RequestLoggerMiddleware } from './common/middleware/request-logger.midd
     AdminModule,
     WishlistModule,
     ChannelsModule,
+    NotificationModule,
   ],
   providers: [
     {

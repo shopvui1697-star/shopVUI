@@ -452,6 +452,32 @@ interface OrderStatusTransition {
     note?: string;
 }
 
+type NotificationType = 'ORDER_STATUS' | 'PAYMENT' | 'COMMISSION' | 'SYSTEM' | 'ADMIN_ALERT' | 'RESELLER' | 'CONVERSATION';
+interface NotificationData {
+    id: string;
+    type: NotificationType;
+    title: string;
+    body: string;
+    isRead: boolean;
+    metadata: Record<string, unknown> | null;
+    templateId: string | null;
+    autoShow: boolean;
+    createdAt: string;
+}
+interface NotificationTemplateData {
+    id: string;
+    name: string;
+    title: string;
+    body: string;
+    type: NotificationType;
+    autoShow: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+interface UnreadCountResponse {
+    count: number;
+}
+
 declare function formatCurrency(amount: number, currency: string): string;
 
-export { type AddressData, type AdminCouponForm, type AdminCouponListItem, type AdminCustomerDetail, type AdminCustomerListItem, type AdminOrderDetail, type AdminOrderFilters, type AdminOrderListItem, type AdminPayoutListItem, type AdminProductForm, type AdminProductListItem, type AdminResellerListItem, type AnalyticsCouponPerformance, type AnalyticsRevenueByChannel, type AnalyticsRevenueOverTime, type AnalyticsTopProducts, type ApiResponse, type AppConfig, type AuthSession, type AuthTokens, type AuthUser, type CartData, type CartItemData, type Category, type CommissionData, type CommissionStatus, type CouponData, type CouponType, type CouponValidationResult, type CreateAddressInput, type CsvImportResult, type GoogleProfile, type GuestCartItem, type OrderDetail, type OrderItemDetail, type OrderStatus, type OrderStatusTransition, type OrderSummary, type PaginatedResponse, type PaymentMethod, type PaymentStatus, type PlaceOrderRequest, type PlaceOrderResponse, type PriceTierData, type Product, type ProductImage, type ResellerBankInfo, type ResellerCouponProposal, type ResellerDashboardStats, type ResellerOrderData, type ResellerProfile, type ResellerRegistration, type ResellerStatus, type StatusHistoryEntry, type UpdateAddressInput, formatCurrency };
+export { type AddressData, type AdminCouponForm, type AdminCouponListItem, type AdminCustomerDetail, type AdminCustomerListItem, type AdminOrderDetail, type AdminOrderFilters, type AdminOrderListItem, type AdminPayoutListItem, type AdminProductForm, type AdminProductListItem, type AdminResellerListItem, type AnalyticsCouponPerformance, type AnalyticsRevenueByChannel, type AnalyticsRevenueOverTime, type AnalyticsTopProducts, type ApiResponse, type AppConfig, type AuthSession, type AuthTokens, type AuthUser, type CartData, type CartItemData, type Category, type CommissionData, type CommissionStatus, type CouponData, type CouponType, type CouponValidationResult, type CreateAddressInput, type CsvImportResult, type GoogleProfile, type GuestCartItem, type NotificationData, type NotificationTemplateData, type NotificationType, type OrderDetail, type OrderItemDetail, type OrderStatus, type OrderStatusTransition, type OrderSummary, type PaginatedResponse, type PaymentMethod, type PaymentStatus, type PlaceOrderRequest, type PlaceOrderResponse, type PriceTierData, type Product, type ProductImage, type ResellerBankInfo, type ResellerCouponProposal, type ResellerDashboardStats, type ResellerOrderData, type ResellerProfile, type ResellerRegistration, type ResellerStatus, type StatusHistoryEntry, type UnreadCountResponse, type UpdateAddressInput, formatCurrency };

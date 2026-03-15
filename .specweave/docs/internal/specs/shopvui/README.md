@@ -27,6 +27,7 @@ Or sync a specific increment:
 ## Active Features
 
 - [FS-014: Multi-Language Support (Vietnamese & English)](FS-014/FEATURE.md)
+- [FS-015: In-App Notification Inbox System](FS-015/FEATURE.md)
 
 ---
 

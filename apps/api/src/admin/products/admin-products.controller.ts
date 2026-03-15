@@ -70,6 +70,14 @@ export class AdminProductsController {
     return this.adminProductsService.uploadImage(id, file);
   }
 
+  @Post(':id/images/url')
+  async addImageByUrl(
+    @Param('id') id: string,
+    @Body() body: { url: string; alt?: string },
+  ) {
+    return this.adminProductsService.addImageByUrl(id, body.url, body.alt);
+  }
+
   @Patch(':id/images/:imageId')
   async updateImage(
     @Param('id') id: string,

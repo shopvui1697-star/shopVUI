@@ -397,6 +397,50 @@ model SyncLog {
   @@map("sync_logs")
 }
 
+// --- Notifications (Increment 0016 redesign) ---
+
+enum NotificationType {
+  ORDER_STATUS
+  PAYMENT
+  COMMISSION
+  SYSTEM
+  ADMIN_ALERT
+  RESELLER
+  CONVERSATION
+}
+
+model NotificationTemplate {
+  id        String           @id @default(cuid())
+  name      String           @unique
+  title     String
+  body      String
+  type      NotificationType
+  autoShow  Boolean          @default(false) @map("auto_show")
+  createdAt DateTime         @default(now()) @map("created_at")
+  updatedAt DateTime         @updatedAt @map("updated_at")
+
+  notifications Notification[]
+
+  @@map("notification_templates")
+}
+
+model Notification {
+  id            String           @id @default(cuid())
+  targetUserIds Json             @map("target_user_ids")
+  type          NotificationType
+  title         String
+  body          String
+  readByUserIds Json             @default("[]") @map("read_by_user_ids")
+  metadata      Json?
+  templateId    String?          @map("template_id")
+  template      NotificationTemplate? @relation(fields: [templateId], references: [id])
+  createdAt     DateTime         @default(now()) @map("created_at")
+  updatedAt     DateTime         @updatedAt @map("updated_at")
+
+  @@index([createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
 // --- Wishlist (Increment 0007) ---
 
 model Wishlist {

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, BadRequestException, ForbiddenException,
 import { prisma } from '@shopvui/db';
 import { CommissionsService } from '../commissions/commissions.service';
 import { EmailService } from '../email/email.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class OrdersService {
@@ -11,6 +12,7 @@ export class OrdersService {
     @Inject(forwardRef(() => CommissionsService))
     private readonly commissionsService: CommissionsService,
     private readonly emailService: EmailService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findAll(userId: string, page = 1, pageSize = 10) {
@@ -113,7 +115,7 @@ export class OrdersService {
       throw new BadRequestException('Only pending orders can be cancelled');
     }
 
-    return prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx) => {
       const updated = await tx.order.update({
         where: { orderNumber },
         data: { status: 'CANCELLED' },
@@ -129,6 +131,19 @@ export class OrdersService {
 
       return updated;
     });
+
+    // Create in-app notification for cancellation (fire-and-forget)
+    this.notificationService.create({
+      targetUserIds: [userId],
+      type: 'ORDER_STATUS',
+      title: `Order ${orderNumber} cancelled`,
+      body: `Your order ${orderNumber} has been cancelled.`,
+      metadata: { orderNumber, status: 'CANCELLED' },
+    }).catch((err) => {
+      this.logger.error(`Failed to create cancellation notification for order ${orderNumber}`, err);
+    });
+
+    return result;
   }
 
   async generateOrderNumber(retries = 3): Promise<string> {
@@ -191,6 +206,27 @@ export class OrdersService {
 
       return updated;
     });
+
+    // Create in-app notification for the customer
+    if (order.userId) {
+      const statusLabels: Record<string, string> = {
+        CONFIRMED: 'confirmed',
+        SHIPPING: 'shipping',
+        DELIVERED: 'delivered',
+        CANCELLED: 'cancelled',
+        RETURNED: 'returned',
+      };
+      const label = statusLabels[newStatus] ?? newStatus.toLowerCase();
+      this.notificationService.create({
+        targetUserIds: [order.userId],
+        type: 'ORDER_STATUS',
+        title: `Order ${orderNumber} ${label}`,
+        body: `Your order ${orderNumber} has been ${label}.`,
+        metadata: { orderNumber, status: newStatus },
+      }).catch((err) => {
+        this.logger.error(`Failed to create notification for order ${orderNumber}`, err);
+      });
+    }
 
     // Commission lifecycle hooks (fire after transaction)
     if (order.resellerId) {

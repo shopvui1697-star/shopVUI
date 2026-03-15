@@ -39,6 +39,9 @@ export default function EditProductPage() {
   const [images, setImages] = useState<ProductImage[]>([]);
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [mediaUrl, setMediaUrl] = useState('');
+  const [mediaAlt, setMediaAlt] = useState('');
+  const [addingUrl, setAddingUrl] = useState(false);
 
   const loadProduct = useCallback(async () => {
     try {
@@ -106,6 +109,25 @@ export default function EditProductPage() {
     }
   }
 
+  async function handleAddUrl() {
+    if (!mediaUrl.trim()) return;
+    setAddingUrl(true);
+    try {
+      await apiFetch(`/admin/products/${params.id}/images/url`, {
+        method: 'POST',
+        body: JSON.stringify({ url: mediaUrl.trim(), alt: mediaAlt.trim() || undefined }),
+      });
+      setMediaUrl('');
+      setMediaAlt('');
+      const product = await apiFetch<ProductData>(`/admin/products/${params.id}`);
+      setImages(product.images);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add media URL');
+    } finally {
+      setAddingUrl(false);
+    }
+  }
+
   async function handleDeleteImage(imageId: string) {
     if (!confirm('Delete this image?')) return;
     try {
@@ -168,68 +190,121 @@ export default function EditProductPage() {
       </form>
 
       <div className="max-w-lg rounded-lg border bg-white p-6">
-        <h3 className="mb-4 text-sm font-semibold text-gray-900">Product Images ({images.length})</h3>
+        <h3 className="mb-4 text-sm font-semibold text-gray-900">Product Media ({images.length})</h3>
 
         {images.length > 0 && (
           <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {images.map((img) => (
-              <div key={img.id} className="group relative rounded-lg border bg-gray-50 p-2">
-                <div className="relative aspect-square overflow-hidden rounded-md bg-white">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={img.url.startsWith('http') ? img.url : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${img.url}`}
-                    alt={img.alt || 'Product image'}
-                    className="h-full w-full object-contain"
+            {images.map((img) => {
+              const resolvedUrl = img.url.startsWith('http') ? img.url : `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}${img.url}`;
+              const isVid = /\.(mp4|webm|ogg|mov)(\?|$)/i.test(resolvedUrl);
+
+              return (
+                <div key={img.id} className="group relative rounded-lg border bg-gray-50 p-2">
+                  <div className="relative aspect-square overflow-hidden rounded-md bg-white">
+                    {isVid ? (
+                      <video
+                        src={resolvedUrl}
+                        className="h-full w-full object-contain"
+                        muted
+                        playsInline
+                        preload="metadata"
+                        onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                        onMouseLeave={(e) => { const v = e.target as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
+                      />
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={resolvedUrl}
+                        alt={img.alt || 'Product image'}
+                        className="h-full w-full object-contain"
+                      />
+                    )}
+                    {isVid && (
+                      <span className="absolute bottom-1 left-1 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                        VIDEO
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteImage(img.id)}
+                      className="absolute right-1 top-1 rounded-full bg-red-600 p-1 text-white opacity-0 transition-opacity hover:bg-red-700 group-hover:opacity-100"
+                      title="Delete"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Alt text..."
+                    defaultValue={img.alt || ''}
+                    onBlur={(e) => handleUpdateAlt(img.id, e.target.value)}
+                    className="mt-2 block w-full rounded border px-2 py-1 text-xs text-gray-700 placeholder:text-gray-400"
                   />
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteImage(img.id)}
-                    className="absolute right-1 top-1 rounded-full bg-red-600 p-1 text-white opacity-0 transition-opacity hover:bg-red-700 group-hover:opacity-100"
-                    title="Delete image"
-                  >
-                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Alt text..."
-                  defaultValue={img.alt || ''}
-                  onBlur={(e) => handleUpdateAlt(img.id, e.target.value)}
-                  className="mt-2 block w-full rounded border px-2 py-1 text-xs text-gray-700 placeholder:text-gray-400"
-                />
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
         {images.length === 0 && (
-          <p className="mb-4 text-sm text-gray-400">No images yet</p>
+          <p className="mb-4 text-sm text-gray-400">No media yet</p>
         )}
 
-        <div className="space-y-3 border-t pt-4">
-          <label className="block text-sm font-medium text-gray-700">Upload New Images</label>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={(e) => setNewFiles(Array.from(e.target.files || []))}
-            className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
-          />
-          {newFiles.length > 0 && (
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-500">{newFiles.length} file(s) selected</span>
-              <button
-                type="button"
-                onClick={handleUploadFiles}
-                disabled={uploading}
-                className="rounded-md bg-green-600 px-3 py-1.5 text-xs text-white hover:bg-green-700 disabled:opacity-50"
-              >
-                {uploading ? 'Uploading...' : 'Upload'}
-              </button>
-            </div>
-          )}
+        <div className="space-y-4 border-t pt-4">
+          {/* Upload images */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">Upload Images</label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => setNewFiles(Array.from(e.target.files || []))}
+              className="block w-full text-sm text-gray-500 file:mr-3 file:rounded-md file:border-0 file:bg-blue-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-blue-700 hover:file:bg-blue-100"
+            />
+            {newFiles.length > 0 && (
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-gray-500">{newFiles.length} file(s) selected</span>
+                <button
+                  type="button"
+                  onClick={handleUploadFiles}
+                  disabled={uploading}
+                  className="rounded-md bg-green-600 px-3 py-1.5 text-xs text-white hover:bg-green-700 disabled:opacity-50"
+                >
+                  {uploading ? 'Uploading...' : 'Upload'}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Add by URL */}
+          <div className="space-y-2 border-t pt-4">
+            <label className="block text-sm font-medium text-gray-700">Add by URL</label>
+            <p className="text-xs text-gray-400">Paste a video or image URL (e.g. YouTube, .mp4, external image)</p>
+            <input
+              type="url"
+              value={mediaUrl}
+              onChange={(e) => setMediaUrl(e.target.value)}
+              placeholder="https://example.com/video.mp4"
+              className="block w-full rounded-md border px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+            <input
+              type="text"
+              value={mediaAlt}
+              onChange={(e) => setMediaAlt(e.target.value)}
+              placeholder="Alt text (optional)"
+              className="block w-full rounded-md border px-3 py-2 text-sm placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={handleAddUrl}
+              disabled={addingUrl || !mediaUrl.trim()}
+              className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+            >
+              {addingUrl ? 'Adding...' : 'Add Media'}
+            </button>
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { prisma } from '@shopvui/db';
 
+const BASE_URL = process.env.PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+
+function resolveImageUrl(url: string): string {
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
+function resolveProductImages<T extends { images: { url: string }[] }>(product: T): T {
+  return {
+    ...product,
+    images: product.images.map((img) => ({ ...img, url: resolveImageUrl(img.url) })),
+  };
+}
+
 @Injectable()
 export class ProductsService {
   async findAll(query: {
@@ -43,7 +57,7 @@ export class ProductsService {
     ]);
 
     return {
-      data: products,
+      data: products.map(resolveProductImages),
       total,
       page,
       pageSize,
@@ -65,6 +79,6 @@ export class ProductsService {
       throw new NotFoundException(`Product with id "${id}" not found`);
     }
 
-    return product;
+    return resolveProductImages(product);
   }
 }

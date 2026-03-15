@@ -9,6 +9,7 @@ import { CartWithAuth } from '../components/CartWithAuth';
 import { CouponCapture } from '../components/CouponCapture';
 import { Navbar } from '../components/layout/navbar';
 import { ThemeProvider } from '../components/ThemeProvider';
+import { QueryProvider } from '../components/QueryProvider';
 import './globals.css';
 
 export const viewport: Viewport = {
@@ -56,13 +57,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
-            <AuthProvider>
-              <CartWithAuth>
-                <CouponCapture />
-                <Navbar />
-                <main className="pt-6">{children}</main>
-              </CartWithAuth>
-            </AuthProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <CartWithAuth>
+                  <CouponCapture />
+                  <Navbar />
+                  <main className="pt-6">{children}</main>
+                </CartWithAuth>
+              </AuthProvider>
+            </QueryProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

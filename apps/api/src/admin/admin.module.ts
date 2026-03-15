@@ -9,6 +9,8 @@ import { AdminImportsModule } from './imports/admin-imports.module';
 import { AdminResellersModule } from './resellers/admin-resellers.module';
 import { AdminChannelsModule } from './channels/admin-channels.module';
 import { AdminCategoriesModule } from './categories/admin-categories.module';
+import { AdminNotificationsModule } from './notifications/admin-notifications.module';
+import { NotificationTemplatesModule } from './notification-templates/notification-templates.module';
 import { StorageModule } from './storage/storage.module';
 
 @Module({
@@ -24,6 +26,8 @@ import { StorageModule } from './storage/storage.module';
     AdminResellersModule,
     AdminChannelsModule,
     AdminCategoriesModule,
+    AdminNotificationsModule,
+    NotificationTemplatesModule,
   ],
 })
 export class AdminModule {}

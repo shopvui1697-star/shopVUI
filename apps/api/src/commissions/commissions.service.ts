@@ -1,12 +1,16 @@
 import { Injectable, ConflictException, Logger } from '@nestjs/common';
 import { prisma } from '@shopvui/db';
 import { EmailService } from '../email/email.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class CommissionsService {
   private readonly logger = new Logger(CommissionsService.name);
 
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly notificationService: NotificationService,
+  ) {}
 
   calculateCommission(coupon: {
     commissionType: string | null;
@@ -102,7 +106,7 @@ export class CommissionsService {
       totalAmount: data.commissions.reduce((sum, c) => sum + c.commissionAmount, 0),
     }));
 
-    // Send approval emails (fire-and-forget)
+    // Send approval emails and in-app notifications (fire-and-forget)
     for (const r of resellers) {
       this.emailService.sendResellerCommissionApproved({
         resellerEmail: r.email,
@@ -110,6 +114,23 @@ export class CommissionsService {
         commissionAmount: r.totalAmount,
         commissionCount: r.commissionCount,
       });
+
+      // Find userId for this reseller
+      const resellerRecord = await prisma.reseller.findUnique({
+        where: { id: r.resellerId },
+        select: { userId: true },
+      });
+      if (resellerRecord) {
+        this.notificationService.create({
+          targetUserIds: [resellerRecord.userId],
+          type: 'COMMISSION',
+          title: 'Commission approved',
+          body: `${r.commissionCount} commission(s) totaling ${r.totalAmount} have been approved.`,
+          metadata: { commissionCount: r.commissionCount, totalAmount: r.totalAmount },
+        }).catch((err) => {
+          this.logger.error(`Failed to create commission notification for reseller ${r.resellerId}`, err);
+        });
+      }
     }
 
     return { approved: matured.length, resellers };
@@ -156,7 +177,7 @@ export class CommissionsService {
       return { paid: commissions.length, resellers: payoutResellers };
     });
 
-    // Send payout emails after transaction (fire-and-forget)
+    // Send payout emails and in-app notifications after transaction (fire-and-forget)
     for (const r of result.resellers) {
       this.emailService.sendResellerCommissionPaid({
         resellerEmail: r.email,
@@ -164,6 +185,23 @@ export class CommissionsService {
         totalAmount: r.totalAmount,
         paidAt: new Date().toISOString(),
       });
+
+      // Find userId for this reseller
+      const resellerRecord = await prisma.reseller.findUnique({
+        where: { id: r.resellerId },
+        select: { userId: true },
+      });
+      if (resellerRecord) {
+        this.notificationService.create({
+          targetUserIds: [resellerRecord.userId],
+          type: 'COMMISSION',
+          title: 'Commission paid',
+          body: `Your commission payout of ${r.totalAmount} has been processed.`,
+          metadata: { totalAmount: r.totalAmount },
+        }).catch((err) => {
+          this.logger.error(`Failed to create payout notification for reseller ${r.resellerId}`, err);
+        });
+      }
     }
 
     return result;

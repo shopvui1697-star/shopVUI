@@ -15,6 +15,7 @@ import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import { useAuth } from '../../../contexts/AuthContext';
 import { Search } from './search';
+import { NotificationBell } from './NotificationBell';
 import { CartModal } from '../../cart/cart-modal';
 import { LanguageSwitcher } from '../../LanguageSwitcher';
 import { ThemeToggle } from '../../ThemeToggle';
@@ -81,6 +82,8 @@ export function Navbar() {
           {!isLoading && (
             <>
               {user ? (
+                <>
+                <NotificationBell />
                 <div className="relative" ref={dropdownRef}>
                   <button
                     onClick={() => setDropdownOpen((prev) => !prev)}
@@ -204,6 +207,7 @@ export function Navbar() {
                     </div>
                   )}
                 </div>
+                </>
               ) : (
                 <>
                   <Link

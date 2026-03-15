@@ -5,6 +5,7 @@ import { GridTileImage } from '../../components/grid/tile';
 import { Footer } from '../../components/layout/footer';
 import { SearchFilter } from './search-filter';
 import { Suspense } from 'react';
+import { findFirstImage } from '../../lib/media';
 
 interface ProductsPageProps {
   searchParams: Promise<{ search?: string; categoryId?: string; page?: string }>;
@@ -53,7 +54,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {products.map((product) => {
-                  const primaryImage = product.images[0];
+                  const primaryImage = findFirstImage(product.images);
                   return (
                     <Link
                       key={product.id}
