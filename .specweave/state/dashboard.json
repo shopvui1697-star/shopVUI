@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-03-15T07:26:26Z",
+  "updatedAt": "2026-03-15T09:27:43Z",
   "increments": {
     "0001-project-setup": {
       "status": "active",
@@ -289,20 +289,38 @@
       "createdAt": "",
       "lastActivity": "2026-03-15T14:25:01Z",
       "userStories": []
+    },
+    "0017-pwa-optimization": {
+      "status": "ready_for_review",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 9,
+        "completed": 9
+      },
+      "acs": {
+        "total": 25,
+        "completed": 25
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-15T16:26:19Z",
+      "userStories": []
     }
   },
   "summary": {
-    "total": 16,
+    "total": 17,
     "active": 5,
     "paused": 0,
     "backlog": 0,
     "planning": 0,
-    "ready_for_review": 7,
+    "ready_for_review": 8,
     "completed": 4,
     "abandoned": 0,
     "archived": 0,
     "byType": {
-      "feature": 16,
+      "feature": 17,
       "hotfix": 0,
       "bug": 0,
       "refactor": 0,
@@ -311,7 +329,7 @@
     },
     "byPriority": {
       "P0": 0,
-      "P1": 14,
+      "P1": 15,
       "P2": 2,
       "P3": 0
     },
@@ -409,6 +427,11 @@
       "metadata": 1773559501,
       "tasks": 1773559585,
       "spec": 1773559568
+    },
+    "0017-pwa-optimization": {
+      "metadata": 1773566779,
+      "tasks": 1773566846,
+      "spec": 1773566863
     }
   }
 }

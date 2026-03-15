@@ -29,6 +29,7 @@ Or sync a specific increment:
 - [FS-014: Multi-Language Support (Vietnamese & English)](FS-014/FEATURE.md)
 - [FS-015: In-App Notification Inbox System](FS-015/FEATURE.md)
 - [FS-016: Product Reviews & Ratings](FS-016/FEATURE.md)
+- [FS-017: PWA Review and Optimization](FS-017/FEATURE.md)
 
 ---
 

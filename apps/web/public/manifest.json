@@ -1,6 +1,7 @@
 {
   "name": "ShopVui",
   "short_name": "ShopVui",
+  "id": "/",
   "description": "ShopVui E-commerce PWA",
   "start_url": "/",
   "display": "standalone",
@@ -30,6 +31,20 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-mobile.png",
+      "type": "image/png",
+      "sizes": "390x844",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshot-desktop.png",
+      "type": "image/png",
+      "sizes": "1280x720",
+      "form_factor": "wide"
     }
   ],
   "shortcuts": [

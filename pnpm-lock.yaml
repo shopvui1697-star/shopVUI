@@ -17,6 +17,9 @@ importers:
 
   apps/admin:
     dependencies:
+      '@serwist/next':
+        specifier: ^9.5.6
+        version: 9.5.6(next@15.5.12(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.9.3)(webpack@5.97.1)
       '@shopvui/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -38,6 +41,9 @@ importers:
       recharts:
         specifier: ^3.8.0
         version: 3.8.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@17.0.2)(react@19.2.4)(redux@5.0.1)
+      serwist:
+        specifier: ^9.5.6
+        version: 9.5.6(browserslist@4.28.1)(typescript@5.9.3)
     devDependencies:
       '@shopvui/eslint-config':
         specifier: workspace:*

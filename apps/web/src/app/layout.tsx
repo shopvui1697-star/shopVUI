@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { AuthProvider } from '../contexts/AuthContext';
 import { CartWithAuth } from '../components/CartWithAuth';
 import { CouponCapture } from '../components/CouponCapture';
+import { InstallPrompt } from '../components/InstallPrompt';
 import { Navbar } from '../components/layout/navbar';
 import { ThemeProvider } from '../components/ThemeProvider';
 import { QueryProvider } from '../components/QueryProvider';
@@ -62,6 +63,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <CartWithAuth>
                   <CouponCapture />
                   <Navbar />
+                  <InstallPrompt />
                   <main className="pt-6">{children}</main>
                 </CartWithAuth>
               </AuthProvider>

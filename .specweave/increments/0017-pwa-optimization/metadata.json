@@ -1,0 +1,15 @@
+{
+  "id": "0017-pwa-optimization",
+  "status": "completed",
+  "type": "feature",
+  "priority": "P1",
+  "created": "2026-03-15T08:56:55.879Z",
+  "lastActivity": "2026-03-15T09:29:47.954Z",
+  "testMode": "TDD",
+  "coverageTarget": 80,
+  "feature_id": null,
+  "epic_id": null,
+  "externalLinks": {},
+  "updated": "2026-03-15T09:26:19.000Z",
+  "approvedAt": "2026-03-15T09:29:47.954Z"
+}
