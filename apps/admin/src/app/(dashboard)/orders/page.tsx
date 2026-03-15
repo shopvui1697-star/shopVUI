@@ -77,7 +77,7 @@ export default function OrdersPage() {
     for (const id of selected) {
       try {
         await transitionOrder(id, 'SHIPPING');
-      } catch (e: any) {
+      } catch {
         const order = data?.data.find((o) => o.id === id);
         errors.push(order?.orderNumber || id);
       }

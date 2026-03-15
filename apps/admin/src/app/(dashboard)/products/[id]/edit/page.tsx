@@ -212,7 +212,6 @@ export default function EditProductPage() {
                         onMouseLeave={(e) => { const v = e.target as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
                       />
                     ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={resolvedUrl}
                         alt={img.alt || 'Product image'}
