@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: '/analytics', label: 'Analytics' },
   { href: '/imports', label: 'Imports' },
   { href: '/channels', label: 'Channels' },
+  { href: '/reviews', label: 'Reviews' },
   { href: '/notifications', label: 'Notifications' },
   { href: '/notification-templates', label: 'Templates' },
 ];

@@ -11,6 +11,7 @@ import { AddToCartButton } from '../../../components/AddToCartButton';
 import { WishlistButton } from '../../../components/WishlistButton';
 import { NotifyAdminButton } from '../../../components/NotifyAdminButton';
 import { ProductGallery } from '../../../components/ProductGallery';
+import { ReviewSection } from '../../../components/reviews/ReviewSection';
 import { findFirstImage } from '../../../lib/media';
 
 interface ProductDetailPageProps {
@@ -161,6 +162,9 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
             </div>
           </div>
         </div>
+
+        {/* Reviews */}
+        <ReviewSection productId={product.id} />
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (

@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "incrementId": "0016-product-reviews",
+  "timestamp": "2026-03-15T07:30:00.000Z",
+  "verdict": "PASS",
+  "shipReadiness": "READY",
+  "summary": { "totalFindings": 2, "critical": 0, "high": 0, "medium": 2 },
+  "findings": [
+    {
+      "title": "Customer review delete not transactional",
+      "severity": "low",
+      "confidence": 72,
+      "category": "correctness",
+      "file": "apps/api/src/reviews/reviews.service.ts:149",
+      "issue": "remove() deletes the review then recalculates aggregates in separate operations. Admin service correctly uses $transaction.",
+      "suggestion": "Wrap delete + recalc in prisma.$transaction",
+      "impact": "Low — customer deletes are infrequent; aggregates self-correct on next admin action."
+    },
+    {
+      "title": "userHasReviewed check only scans current page",
+      "severity": "low",
+      "confidence": 70,
+      "category": "edge-case",
+      "file": "apps/web/src/components/reviews/ReviewSection.tsx:24",
+      "issue": "userHasReviewed checks only the current page of reviews. If user's review is on another page, the form still shows.",
+      "suggestion": "Add a dedicated canReview API call or check via summary endpoint.",
+      "impact": "Low — backend enforces unique constraint via 409 ConflictException."
+    }
+  ]
+}

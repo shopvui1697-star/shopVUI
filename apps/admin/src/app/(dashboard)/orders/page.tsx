@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api';
 import { DataTable, type Column } from '@/components/data-table';
 import { StatusBadge, ChannelBadge } from '@/components/status-badge';
-import { ORDER_STATUS_LABELS, CHANNEL_LABELS } from '@/lib/constants';
+import { ORDER_STATUS_LABELS, CHANNEL_LABELS, type OrderStatus } from '@/lib/constants';
 import type { AdminOrderListItem } from '@shopvui/shared';
 
 interface OrdersResponse {
@@ -51,13 +51,39 @@ export default function OrdersPage() {
     fetchOrders();
   }, [fetchOrders]);
 
-  async function handleBulkShip() {
-    if (selected.size === 0) return;
-    for (const id of selected) {
+  async function transitionOrder(id: string, target: OrderStatus) {
+    const TRANSITION_PATH: Partial<Record<OrderStatus, OrderStatus[]>> = {
+      PENDING: ['CONFIRMED', 'SHIPPING'],
+      CONFIRMED: ['SHIPPING'],
+    };
+    const order = data?.data.find((o) => o.id === id);
+    if (!order) return;
+
+    const steps = TRANSITION_PATH[order.status as OrderStatus];
+    if (!steps) return;
+
+    for (const step of steps) {
       await apiFetch(`/admin/orders/${id}/status`, {
         method: 'PATCH',
-        body: JSON.stringify({ status: 'SHIPPING' }),
+        body: JSON.stringify({ status: step }),
       });
+      if (step === target) break;
+    }
+  }
+
+  async function handleBulkShip() {
+    if (selected.size === 0) return;
+    const errors: string[] = [];
+    for (const id of selected) {
+      try {
+        await transitionOrder(id, 'SHIPPING');
+      } catch (e: any) {
+        const order = data?.data.find((o) => o.id === id);
+        errors.push(order?.orderNumber || id);
+      }
+    }
+    if (errors.length > 0) {
+      alert(`Could not ship orders: ${errors.join(', ')}`);
     }
     setSelected(new Set());
     fetchOrders();

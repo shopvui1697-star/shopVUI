@@ -21,6 +21,7 @@ import { AdminModule } from './admin/admin.module';
 import { WishlistModule } from './wishlist/wishlist.module';
 import { ChannelsModule } from './channels/channels.module';
 import { NotificationModule } from './notification/notification.module';
+import { ReviewsModule } from './reviews/reviews.module';
 import { RequestLoggerMiddleware } from './common/middleware/request-logger.middleware';
 
 @Module({
@@ -51,6 +52,7 @@ import { RequestLoggerMiddleware } from './common/middleware/request-logger.midd
     WishlistModule,
     ChannelsModule,
     NotificationModule,
+    ReviewsModule,
   ],
   providers: [
     {

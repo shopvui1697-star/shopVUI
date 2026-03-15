@@ -11,6 +11,7 @@ import { AdminChannelsModule } from './channels/admin-channels.module';
 import { AdminCategoriesModule } from './categories/admin-categories.module';
 import { AdminNotificationsModule } from './notifications/admin-notifications.module';
 import { NotificationTemplatesModule } from './notification-templates/notification-templates.module';
+import { AdminReviewsModule } from './reviews/admin-reviews.module';
 import { StorageModule } from './storage/storage.module';
 
 @Module({
@@ -28,6 +29,7 @@ import { StorageModule } from './storage/storage.module';
     AdminCategoriesModule,
     AdminNotificationsModule,
     NotificationTemplatesModule,
+    AdminReviewsModule,
   ],
 })
 export class AdminModule {}

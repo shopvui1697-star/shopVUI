@@ -47,4 +47,14 @@ export type {
   OrderStatusTransition,
 } from './admin.js';
 export type { NotificationType, NotificationData, NotificationTemplateData, UnreadCountResponse } from './notification.js';
+export type {
+  ReviewStatus,
+  CreateReviewDto,
+  UpdateReviewDto,
+  ReviewResponse,
+  ReviewVoteResponse,
+  ReviewSummary,
+  ReviewListQuery,
+  AdminReviewListItem,
+} from './review.js';
 export { formatCurrency } from './utils/currency.js';

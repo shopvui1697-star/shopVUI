@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-03-15T01:55:53Z",
+  "updatedAt": "2026-03-15T07:26:26Z",
   "increments": {
     "0001-project-setup": {
       "status": "active",
@@ -271,20 +271,38 @@
       "createdAt": "",
       "lastActivity": "2026-03-15T08:46:44Z",
       "userStories": []
+    },
+    "0016-product-reviews": {
+      "status": "ready_for_review",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 10,
+        "completed": 10
+      },
+      "acs": {
+        "total": 33,
+        "completed": 33
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-15T14:25:01Z",
+      "userStories": []
     }
   },
   "summary": {
-    "total": 15,
+    "total": 16,
     "active": 5,
     "paused": 0,
     "backlog": 0,
     "planning": 0,
-    "ready_for_review": 6,
+    "ready_for_review": 7,
     "completed": 4,
     "abandoned": 0,
     "archived": 0,
     "byType": {
-      "feature": 15,
+      "feature": 16,
       "hotfix": 0,
       "bug": 0,
       "refactor": 0,
@@ -293,7 +311,7 @@
     },
     "byPriority": {
       "P0": 0,
-      "P1": 13,
+      "P1": 14,
       "P2": 2,
       "P3": 0
     },
@@ -386,6 +404,11 @@
       "metadata": 1773539204,
       "tasks": 1773539211,
       "spec": 1773539753
+    },
+    "0016-product-reviews": {
+      "metadata": 1773559501,
+      "tasks": 1773559585,
+      "spec": 1773559568
     }
   }
 }

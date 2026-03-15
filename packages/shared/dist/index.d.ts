@@ -478,6 +478,59 @@ interface UnreadCountResponse {
     count: number;
 }
 
+type ReviewStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+interface CreateReviewDto {
+    productId: string;
+    rating: number;
+    comment: string;
+}
+interface UpdateReviewDto {
+    rating?: number;
+    comment?: string;
+}
+interface ReviewResponse {
+    id: string;
+    userId: string;
+    userName: string;
+    userAvatar: string | null;
+    productId: string;
+    rating: number;
+    comment: string;
+    status: ReviewStatus;
+    helpfulCount: number;
+    userHasVoted: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+interface ReviewVoteResponse {
+    voted: boolean;
+    helpfulCount: number;
+}
+interface ReviewSummary {
+    avgRating: number | null;
+    reviewCount: number;
+    distribution: Record<1 | 2 | 3 | 4 | 5, number>;
+}
+interface ReviewListQuery {
+    productId?: string;
+    status?: ReviewStatus;
+    page?: number;
+    pageSize?: number;
+    sortBy?: 'rating' | 'createdAt' | 'helpfulCount';
+}
+interface AdminReviewListItem {
+    id: string;
+    userName: string;
+    userEmail: string;
+    productName: string;
+    productId: string;
+    rating: number;
+    comment: string;
+    status: ReviewStatus;
+    helpfulCount: number;
+    createdAt: string;
+}
+
 declare function formatCurrency(amount: number, currency: string): string;
 
-export { type AddressData, type AdminCouponForm, type AdminCouponListItem, type AdminCustomerDetail, type AdminCustomerListItem, type AdminOrderDetail, type AdminOrderFilters, type AdminOrderListItem, type AdminPayoutListItem, type AdminProductForm, type AdminProductListItem, type AdminResellerListItem, type AnalyticsCouponPerformance, type AnalyticsRevenueByChannel, type AnalyticsRevenueOverTime, type AnalyticsTopProducts, type ApiResponse, type AppConfig, type AuthSession, type AuthTokens, type AuthUser, type CartData, type CartItemData, type Category, type CommissionData, type CommissionStatus, type CouponData, type CouponType, type CouponValidationResult, type CreateAddressInput, type CsvImportResult, type GoogleProfile, type GuestCartItem, type NotificationData, type NotificationTemplateData, type NotificationType, type OrderDetail, type OrderItemDetail, type OrderStatus, type OrderStatusTransition, type OrderSummary, type PaginatedResponse, type PaymentMethod, type PaymentStatus, type PlaceOrderRequest, type PlaceOrderResponse, type PriceTierData, type Product, type ProductImage, type ResellerBankInfo, type ResellerCouponProposal, type ResellerDashboardStats, type ResellerOrderData, type ResellerProfile, type ResellerRegistration, type ResellerStatus, type StatusHistoryEntry, type UnreadCountResponse, type UpdateAddressInput, formatCurrency };
+export { type AddressData, type AdminCouponForm, type AdminCouponListItem, type AdminCustomerDetail, type AdminCustomerListItem, type AdminOrderDetail, type AdminOrderFilters, type AdminOrderListItem, type AdminPayoutListItem, type AdminProductForm, type AdminProductListItem, type AdminResellerListItem, type AdminReviewListItem, type AnalyticsCouponPerformance, type AnalyticsRevenueByChannel, type AnalyticsRevenueOverTime, type AnalyticsTopProducts, type ApiResponse, type AppConfig, type AuthSession, type AuthTokens, type AuthUser, type CartData, type CartItemData, type Category, type CommissionData, type CommissionStatus, type CouponData, type CouponType, type CouponValidationResult, type CreateAddressInput, type CreateReviewDto, type CsvImportResult, type GoogleProfile, type GuestCartItem, type NotificationData, type NotificationTemplateData, type NotificationType, type OrderDetail, type OrderItemDetail, type OrderStatus, type OrderStatusTransition, type OrderSummary, type PaginatedResponse, type PaymentMethod, type PaymentStatus, type PlaceOrderRequest, type PlaceOrderResponse, type PriceTierData, type Product, type ProductImage, type ResellerBankInfo, type ResellerCouponProposal, type ResellerDashboardStats, type ResellerOrderData, type ResellerProfile, type ResellerRegistration, type ResellerStatus, type ReviewListQuery, type ReviewResponse, type ReviewStatus, type ReviewSummary, type ReviewVoteResponse, type StatusHistoryEntry, type UnreadCountResponse, type UpdateAddressInput, type UpdateReviewDto, formatCurrency };
