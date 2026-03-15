@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Product } from '@shopvui/shared';
 import { GridTileImage } from './tile';
+import { findFirstImage } from '../../lib/media';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -13,7 +14,8 @@ function ThreeItemGridItem({
   size: 'full' | 'half';
   priority?: boolean;
 }) {
-  const imageUrl = item.images?.[0]?.url || '';
+  const primaryImage = findFirstImage(item.images);
+  const imageUrl = primaryImage?.url || '';
 
   return (
     <div
