@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-03-15T09:27:43Z",
+  "updatedAt": "2026-03-15T13:50:26Z",
   "increments": {
     "0001-project-setup": {
       "status": "active",
@@ -307,11 +307,29 @@
       "createdAt": "",
       "lastActivity": "2026-03-15T16:26:19Z",
       "userStories": []
+    },
+    "0018-nextjs-16-upgrade": {
+      "status": "active",
+      "type": "feature",
+      "priority": "P1",
+      "title": "",
+      "project": "",
+      "tasks": {
+        "total": 6,
+        "completed": 6
+      },
+      "acs": {
+        "total": 13,
+        "completed": 13
+      },
+      "createdAt": "",
+      "lastActivity": "2026-03-15T20:39:20Z",
+      "userStories": []
     }
   },
   "summary": {
-    "total": 17,
-    "active": 5,
+    "total": 18,
+    "active": 6,
     "paused": 0,
     "backlog": 0,
     "planning": 0,
@@ -320,7 +338,7 @@
     "abandoned": 0,
     "archived": 0,
     "byType": {
-      "feature": 17,
+      "feature": 18,
       "hotfix": 0,
       "bug": 0,
       "refactor": 0,
@@ -329,7 +347,7 @@
     },
     "byPriority": {
       "P0": 0,
-      "P1": 15,
+      "P1": 16,
       "P2": 2,
       "P3": 0
     },
@@ -432,6 +450,11 @@
       "metadata": 1773566779,
       "tasks": 1773566846,
       "spec": 1773566863
+    },
+    "0018-nextjs-16-upgrade": {
+      "metadata": 1773581960,
+      "tasks": 1773582596,
+      "spec": 1773582626
     }
   }
 }

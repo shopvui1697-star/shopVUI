@@ -17,6 +17,7 @@ import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
 import * as api from '../../lib/api';
 import { Footer } from '../../components/layout/footer';
+import { isImageUrl } from '../../lib/media';
 
 export default function CartPage() {
   const t = useTranslations('cart');
@@ -80,8 +81,8 @@ export default function CartPage() {
           {/* Cart Items - Left Column */}
           <div className="lg:col-span-2">
             <ul className="divide-y divide-neutral-200 dark:divide-neutral-700">
-              {cart.items.map((item) => (
-                <li key={item.id} className="flex gap-4 py-6" data-testid="cart-item">
+              {cart.items.map((item, index) => (
+                <li key={item.id ?? `cart-item-${index}`} className="flex gap-4 py-6" data-testid="cart-item">
                   {/* Product Image */}
                   <div
                     className={clsx(
@@ -90,7 +91,7 @@ export default function CartPage() {
                       'dark:border-neutral-700 dark:bg-neutral-800'
                     )}
                   >
-                    {item.productImage ? (
+                    {item.productImage && isImageUrl(item.productImage) ? (
                       <Image
                         src={item.productImage}
                         alt={item.productName}

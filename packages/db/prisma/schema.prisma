@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -39,7 +39,7 @@ model Category {
   id        String     @id @default(cuid())
   name      String
   slug      String     @unique
-  description String?
+  description String?  @db.Text
   parentId  String?    @map("parent_id")
   parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id])
   children  Category[] @relation("CategoryTree")
@@ -54,7 +54,7 @@ model Product {
   id             String         @id @default(cuid())
   name           String
   slug           String         @unique
-  description    String
+  description    String         @db.Text
   price          Int
   compareAtPrice Int?           @map("compare_at_price")
   sku            String         @unique
@@ -81,7 +81,7 @@ model Product {
 
 model ProductImage {
   id        String  @id @default(cuid())
-  url       String
+  url       String  @db.Text
   alt       String?
   sortOrder Int     @default(0) @map("sort_order")
   productId String  @map("product_id")
@@ -371,8 +371,8 @@ model ChannelConnection {
   channel               ChannelType
   shopId                String      @map("shop_id")
   shopName              String      @map("shop_name")
-  encryptedAccessToken  String      @map("encrypted_access_token")
-  encryptedRefreshToken String      @map("encrypted_refresh_token")
+  encryptedAccessToken  String      @db.Text @map("encrypted_access_token")
+  encryptedRefreshToken String      @db.Text @map("encrypted_refresh_token")
   tokenExpiresAt        DateTime    @map("token_expires_at")
   syncEnabled           Boolean     @default(true) @map("sync_enabled")
   syncIntervalMinutes   Int         @default(10) @map("sync_interval_minutes")
@@ -397,7 +397,7 @@ model SyncLog {
   ordersCreated       Int               @default(0) @map("orders_created")
   ordersUpdated       Int               @default(0) @map("orders_updated")
   errorType           String?           @map("error_type")
-  errorMessage        String?           @map("error_message")
+  errorMessage        String?           @db.Text @map("error_message")
   durationMs          Int?              @map("duration_ms")
   startedAt           DateTime          @default(now()) @map("started_at")
   completedAt         DateTime?         @map("completed_at")
@@ -423,7 +423,7 @@ model NotificationTemplate {
   id        String           @id @default(cuid())
   name      String           @unique
   title     String
-  body      String
+  body      String           @db.Text
   type      NotificationType
   autoShow  Boolean          @default(false) @map("auto_show")
   createdAt DateTime         @default(now()) @map("created_at")
@@ -439,7 +439,7 @@ model Notification {
   targetUserIds Json             @map("target_user_ids")
   type          NotificationType
   title         String
-  body          String
+  body          String           @db.Text
   readByUserIds Json             @default("[]") @map("read_by_user_ids")
   metadata      Json?
   templateId    String?          @map("template_id")
@@ -460,7 +460,7 @@ model ProductReview {
   productId    String       @map("product_id")
   product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
   rating       Int
-  comment      String
+  comment      String       @db.Text
   status       ReviewStatus @default(PENDING)
   helpfulCount Int          @default(0) @map("helpful_count")
   votes        ReviewVote[]

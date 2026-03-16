@@ -21,6 +21,7 @@ import { formatCurrency } from '@shopvui/shared';
 import { useTranslations } from 'next-intl';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { isImageUrl } from '../../lib/media';
 
 export function CartModal() {
   const { cart, itemCount, updateItem, removeItem, isLoading } = useCart();
@@ -127,9 +128,9 @@ export function CartModal() {
                 <>
                   {/* Items list */}
                   <ul className="flex-grow overflow-auto py-4">
-                    {sortedItems.map((item) => (
+                    {sortedItems.map((item, index) => (
                       <li
-                        key={item.id}
+                        key={item.id ?? `cart-item-${index}`}
                         className={clsx(
                           'flex w-full gap-4 border-b border-neutral-200 py-4',
                           'dark:border-neutral-700'
@@ -143,7 +144,7 @@ export function CartModal() {
                             'dark:border-neutral-700 dark:bg-neutral-800'
                           )}
                         >
-                          {item.productImage ? (
+                          {item.productImage && isImageUrl(item.productImage) ? (
                             <Image
                               src={item.productImage}
                               alt={item.productName}

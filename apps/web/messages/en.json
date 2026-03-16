@@ -6,7 +6,8 @@
     "wishlist": "Wishlist",
     "myAddresses": "My Addresses",
     "signOut": "Sign out",
-    "login": "Login"
+    "login": "Login",
+    "search": "Search"
   },
   "search": {
     "placeholder": "Search for products..."

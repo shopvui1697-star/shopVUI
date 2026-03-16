@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Product } from '@shopvui/shared';
 import { GridTileImage } from './grid/tile';
+import { findFirstImage } from '../lib/media';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
 
@@ -31,7 +32,8 @@ export async function Carousel() {
     <div className="w-full overflow-x-auto pb-6 pt-1">
       <ul className="animate-carousel flex gap-4">
         {carouselProducts.map((product, i) => {
-          const imageUrl = product.images?.[0]?.url || '';
+          const primaryImage = findFirstImage(product.images);
+          const imageUrl = primaryImage?.url || '';
 
           return (
             <li

@@ -2,7 +2,7 @@ import type { NextConfig } from 'next';
 import withSerwist from '@serwist/next';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@shopvui/ui', '@shopvui/shared'],
+  turbopack: {},
 };
 
 export default withSerwist({

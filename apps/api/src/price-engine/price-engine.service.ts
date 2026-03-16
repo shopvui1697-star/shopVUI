@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { prisma } from '@shopvui/db';
+import { findFirstImageUrl } from '@shopvui/shared';
 
 export interface CartItemInput {
   productId: string;
@@ -55,7 +56,7 @@ export class PriceEngineService {
     const products = await prisma.product.findMany({
       where: { id: { in: items.map((i) => i.productId) }, isActive: true },
       include: {
-        images: { orderBy: { sortOrder: 'asc' }, take: 1 },
+        images: { orderBy: { sortOrder: 'asc' } },
         priceTiers: { orderBy: { minQty: 'asc' } },
       },
     });
@@ -79,7 +80,7 @@ export class PriceEngineService {
       calculated.push({
         productId: product.id,
         productName: product.name,
-        productImage: product.images[0]?.url ?? null,
+        productImage: findFirstImageUrl(product.images),
         quantity: item.quantity,
         unitPrice,
         subtotal: unitPrice * item.quantity,

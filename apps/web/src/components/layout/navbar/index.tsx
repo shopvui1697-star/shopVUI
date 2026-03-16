@@ -10,6 +10,7 @@ import {
   MapPinIcon,
   UserCircleIcon,
   ChevronDownIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -31,7 +32,9 @@ export function Navbar() {
   const { user, isLoading, logout } = useAuth();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     setDropdownOpen(false);
@@ -39,11 +42,13 @@ export function Navbar() {
     router.push('/');
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -70,15 +75,39 @@ export function Navbar() {
 
         </div>
 
-        {/* CENTER: Search */}
-        <div className="mx-4 flex-1 md:mx-8">
-          <Suspense fallback={<div className="h-10" />}>
-            <Search />
-          </Suspense>
-        </div>
+        <div className="flex-1" />
 
-        {/* RIGHT: User + Cart */}
+        {/* RIGHT: Search + User + Cart */}
         <div className="flex items-center gap-3">
+          {/* Search toggle */}
+          <div className="relative" ref={searchRef}>
+            <button
+              onClick={() => setSearchOpen((prev) => !prev)}
+              aria-label={t('search')}
+              className={clsx(
+                'relative rounded-lg p-2 transition-colors',
+                'text-neutral-600 hover:bg-neutral-100 hover:text-black',
+                'dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white'
+              )}
+            >
+              <MagnifyingGlassIcon className="h-5 w-5" />
+            </button>
+            {searchOpen && (
+              <div
+                className={clsx(
+                  'fixed left-4 right-4 top-[60px]',
+                  'sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-72',
+                  'rounded-xl border bg-white p-3 shadow-lg',
+                  'dark:border-neutral-700 dark:bg-neutral-900',
+                  'animate-in fade-in slide-in-from-top-1 duration-150'
+                )}
+              >
+                <Suspense fallback={<div className="h-10" />}>
+                  <Search onNavigate={() => setSearchOpen(false)} />
+                </Suspense>
+              </div>
+            )}
+          </div>
           {!isLoading && (
             <>
               {user ? (
