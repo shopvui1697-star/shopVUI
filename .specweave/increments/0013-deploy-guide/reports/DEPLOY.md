@@ -7,7 +7,7 @@
 | Node.js | 20+ | [nodejs.org](https://nodejs.org/) |
 | pnpm | 9.15.4 | `corepack enable && corepack prepare pnpm@9.15.4 --activate` |
 | Docker & Docker Compose | Latest | [docker.com](https://www.docker.com/) |
-| PostgreSQL | 16+ | Via Docker (recommended) or native install |
+| MySQL | 8.0+ | Via Docker (recommended) or native install |
 
 ## Project Structure
 
@@ -30,7 +30,7 @@ Create a `.env` file at the project root:
 
 ```bash
 # ── Database ──────────────────────────────────────────────
-DATABASE_URL=postgresql://shopvui:shopvui_dev@localhost:5432/shopvui
+DATABASE_URL=mysql://shopvui:shopvui_dev@localhost:3306/shopvui
 
 # ── Google OAuth2 ─────────────────────────────────────────
 GOOGLE_CLIENT_ID=your-google-client-id
@@ -105,8 +105,8 @@ PORT=4000
 # 1. Install dependencies
 pnpm install
 
-# 2. Start PostgreSQL (if not running)
-docker compose up postgres -d
+# 2. Start MySQL (if not running)
+docker compose up mysql -d
 
 # 3. Run database migrations
 cd packages/db && pnpm db:migrate && cd ../..
@@ -129,9 +129,9 @@ This starts:
 docker compose up --build
 ```
 
-This starts PostgreSQL + all three apps with hot-reload via volume mounts.
+This starts MySQL + all three apps with hot-reload via volume mounts.
 
-**Note**: When using Docker Compose, the API uses `DATABASE_URL=postgresql://shopvui:shopvui_dev@postgres:5432/shopvui` (hostname `postgres` instead of `localhost`).
+**Note**: When using Docker Compose, the API uses `DATABASE_URL=mysql://shopvui:shopvui_dev@mysql:3306/shopvui` (hostname `mysql` instead of `localhost`).
 
 ### Run a single app
 
@@ -191,7 +191,7 @@ pnpm dlx tsx prisma/seed.ts
 | `pnpm format` | Format code with Prettier |
 | `pnpm format:check` | Check formatting without writing |
 | `docker compose up` | Start everything via Docker |
-| `docker compose up postgres -d` | Start only PostgreSQL |
+| `docker compose up mysql -d` | Start only MySQL |
 
 ## Production Checklist
 
@@ -201,7 +201,7 @@ pnpm dlx tsx prisma/seed.ts
   ```bash
   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
   ```
-- [ ] Use a managed PostgreSQL instance (e.g., AWS RDS, Supabase)
+- [ ] Use a managed MySQL instance (e.g., AWS RDS, PlanetScale)
 - [ ] Update `DATABASE_URL` to production database
 - [ ] Register Google OAuth app with production redirect URI
 - [ ] Update `WEB_URL`, `ADMIN_URL`, `GOOGLE_CALLBACK_URL` to production domains

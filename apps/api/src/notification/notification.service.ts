@@ -222,7 +222,7 @@ export class NotificationService {
   async getProductHistory(userId: string, productId: string) {
     const notifications = await prisma.notification.findMany({
       where: {
-        metadata: { path: ['productId'], equals: productId },
+        metadata: { path: '$.productId', equals: productId },
       },
       orderBy: { createdAt: 'asc' },
     });

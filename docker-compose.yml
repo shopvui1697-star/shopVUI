@@ -1,14 +1,16 @@
 services:
-  postgres:
-    image: postgres:16-alpine
+  mysql:
+    image: mysql:8.0
     ports:
-      - "5432:5432"
+      - "3306:3306"
     environment:
-      POSTGRES_USER: shopvui
-      POSTGRES_PASSWORD: shopvui_dev
-      POSTGRES_DB: shopvui
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: shopvui
+      MYSQL_USER: shopvui
+      MYSQL_PASSWORD: shopvui_dev
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
 
   web:
     build:
@@ -40,7 +42,7 @@ services:
 
   api:
     depends_on:
-      - postgres
+      - mysql
     build:
       context: .
       dockerfile: apps/api/Dockerfile.dev
@@ -53,10 +55,10 @@ services:
       - api_node_modules:/app/node_modules
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgresql://shopvui:shopvui_dev@postgres:5432/shopvui
+      - DATABASE_URL=mysql://shopvui:shopvui_dev@mysql:3306/shopvui
 
 volumes:
-  postgres_data:
+  mysql_data:
   web_node_modules:
   admin_node_modules:
   api_node_modules:

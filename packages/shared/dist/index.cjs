@@ -20,7 +20,9 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
-  formatCurrency: () => formatCurrency
+  findFirstImageUrl: () => findFirstImageUrl,
+  formatCurrency: () => formatCurrency,
+  isImageUrl: () => isImageUrl
 });
 module.exports = __toCommonJS(index_exports);
 
@@ -31,7 +33,23 @@ function formatCurrency(amount, currency) {
     currency
   }).format(amount / 100);
 }
+
+// src/utils/media.ts
+var VIDEO_FILE_EXTENSIONS = [".mp4", ".webm", ".ogg", ".mov"];
+var VIDEO_HOSTS = ["youtube.com", "youtu.be", "vimeo.com"];
+function isImageUrl(url) {
+  const lower = url.toLowerCase();
+  const path = lower.split("?")[0];
+  if (VIDEO_FILE_EXTENSIONS.some((ext) => path.endsWith(ext))) return false;
+  if (VIDEO_HOSTS.some((host) => lower.includes(host))) return false;
+  return true;
+}
+function findFirstImageUrl(images) {
+  return images.find((img) => isImageUrl(img.url))?.url ?? null;
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  formatCurrency
+  findFirstImageUrl,
+  formatCurrency,
+  isImageUrl
 });
